@@ -1,11 +1,27 @@
 #!/usr/bin/env python
+# vi: ts=4 sw=4
+"""
+Usage: viewer.py [-c] [--profile=geobrick_lv] PMC_FILE
 
+Arguments:
+    PMC_FILE         the PMC file to display
+
+Options:
+    -c --clean       clean pmc file first
+    -p --profile=x   variable information profile [default: geobrick_lv]
+"""
+
+from __future__ import print_function
 import sys
 from PyQt4 import (QtGui, Qsci)
 from PyQt4 import QtCore
+from cStringIO import StringIO
+
+from docopt import docopt
 
 from tpmac.conf import TpConfig
-
+import tpmac.info as tp_info
+from tpmac.clean import clean_pmc
 
 class TextEditor(Qsci.QsciScintilla):
     ARROW_MARKER_NUM = 8
@@ -101,11 +117,12 @@ class RefWidget(QtGui.QListWidget):
 
 
 class PLCEditor(QtGui.QSplitter):
-    def __init__(self, plc, parent=None):
+    def __init__(self, plc, reformat=False, parent=None):
         QtGui.QFrame.__init__(self, QtCore.Qt.Vertical, parent)
         self.plc = plc
         
-        plc.reformat()
+        if reformat:
+            plc.reformat()
 
         self.editor = TextEditor()
         self.refs = RefWidget(plc, self.editor)
@@ -121,7 +138,7 @@ class PLCEditor(QtGui.QSplitter):
 
 
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self, fn):
+    def __init__(self, fn, clean=False):
         QtGui.QMainWindow.__init__(self)
         MainWindow.instance = self
 
@@ -133,7 +150,17 @@ class MainWindow(QtGui.QMainWindow):
 
         self.main_splitter.addWidget(self.plc_tabs)
 
+        if clean:
+            print('Cleaning file...')
+            output = StringIO()
+            for line in clean_pmc(fn, annotate=True, fix_indent=True):
+                print(line, file=output)
+            
+            output.seek(0)
+            fn = output
+        
         self.config = config = TpConfig(fn)
+
         for plc_num, plc in config.plcs.items():
             self.plc_tabs.addTab(PLCEditor(plc), 'PLC %d' % plc.number)
         
@@ -144,8 +171,14 @@ class MainWindow(QtGui.QMainWindow):
 
 
 if __name__ == "__main__":
+    opts = docopt(__doc__)
+
+    tp_info.load_settings(opts['--profile'])
+    pmc_file = opts['PMC_FILE']
+    
+    print('PMC file is', pmc_file)
+
     app = QtGui.QApplication(sys.argv)
-    # main = MainWindow('cleaned.pmc')
-    main = MainWindow(sys.argv[1])
+    main = MainWindow(pmc_file, clean=opts['--clean'])
     main.show()
     app.exec_()

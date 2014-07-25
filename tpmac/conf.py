@@ -11,14 +11,14 @@ MIN_COMMENT_COL = 10
 SPACES_PER_TAB = 4
 
 def format_comments(lines):
-    lengths = [len(line) for line, comment in lines] + [MIN_COMMENT_COL]
-    comment_col = max(lengths) + 1
+    lengths = [len(line) for line, comment in lines]
+    comment_col = max(lengths) + 2
+
+    if comment_col < MIN_COMMENT_COL:
+        comment_col = MIN_COMMENT_COL
     
     last_line = ''
     for line, comment in lines:
-        if comment and 'settings' in comment:
-            print(line, comment, last_line)
-
         if comment is not None:
             if line.strip():
                 line = ''.join((line, ' ' * (comment_col - len(line)), '; ', comment))
@@ -94,7 +94,7 @@ class TpCoordSys(object):
         return '\n'.join(self.config_str())
 
 
-first_word_re = re.compile('^([a-zA-Z]+).*?')
+first_word_re = re.compile('^\s*([a-zA-Z]+).*?')
 def get_first_word(line):
     m = first_word_re.match(line.lower())
     if m:
@@ -200,10 +200,6 @@ class TpPlcBlock(object):
 
             self.lines[i] = (line, comment)
             
-            if comment:
-                if 'settings' in comment:
-                    print('"%s" comment: "%s"'  % (line, comment))
-
             if word in indent_words:
                 indent += indent_amount
             elif word in deindent_words:
@@ -238,10 +234,10 @@ class TpPlcBlock(object):
 
 
 class TpConfig(object):
-    coord_re = re.compile('^&(\d+)(.*)$', flags=re.IGNORECASE)
-    coord_def_re = re.compile('^#(\d+)->(.*)$', flags=re.IGNORECASE)
-    plc_re = re.compile('^open plc (\d+)\s*(clear)?', flags=re.IGNORECASE)
-    var_re = re.compile('([pmqi]\d+)\s*(->|=)\s*(.*)$', flags=re.IGNORECASE)
+    coord_re = re.compile('^\s*&(\d+)(.*)$', flags=re.IGNORECASE)
+    coord_def_re = re.compile('^\s*#(\d+)->(.*)$', flags=re.IGNORECASE)
+    plc_re = re.compile('^\s*open plc (\d+)\s*(clear)?', flags=re.IGNORECASE)
+    var_re = re.compile('^\s*([pmqi]\d+)\s*(->|=)\s*(.*)$', flags=re.IGNORECASE)
 
     def __init__(self, fn='config/mc09.pmc', **load_opts):
         if fn:
@@ -252,7 +248,7 @@ class TpConfig(object):
     @staticmethod
     def parse_lines(lines):
         for i, line in enumerate(lines):
-            line = line.strip()
+            line = line.rstrip()
             line = line.replace('\t', ' ' * SPACES_PER_TAB)
             if ';' in line:
                 in_quotes = False
@@ -288,9 +284,13 @@ class TpConfig(object):
 
     def load_config(self, fn, **kwargs):
         self._clear()
+        
+        if hasattr(fn, 'readlines'):
+            f = fn
+        else:
+            f = open(fn, 'rt')
 
-        self.lines = [line.rstrip() for line in 
-                      open(fn, 'rt').readlines()]
+        self.lines = [line.rstrip() for line in f.readlines()]
         
         for line_num, line, comment in TpConfig.parse_lines(self.lines):
             self._eval_line(line_num, line, comment, **kwargs)
@@ -368,7 +368,7 @@ class TpConfig(object):
         self.blocks.append(self._plc)
 
     def _eval_line(self, line_num, line, comment, verbose=True):
-        line_lower = line.lower()
+        line_lower = line.lower().strip()
             
         eval_kwargs = dict(verbose=verbose)
 
