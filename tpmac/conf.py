@@ -13,17 +13,29 @@ SPACES_PER_TAB = 4
 def format_comments(lines):
     lengths = [len(line) for line, comment in lines] + [MIN_COMMENT_COL]
     comment_col = max(lengths) + 1
-
+    
+    last_line = ''
     for line, comment in lines:
+        if comment and 'settings' in comment:
+            print(line, comment, last_line)
+
         if comment is not None:
-            if line:
-                yield ''.join((line, ' ' * (comment_col - len(line)), '; ', comment))
+            if line.strip():
+                line = ''.join((line, ' ' * (comment_col - len(line)), '; ', comment))
             elif comment:
-                yield ''.join(('; ', comment))
+                if last_line:
+                    # certainly a lazy way...
+                    last_spaces = len(last_line) - len(last_line.lstrip())
+                else:
+                    last_spaces = 0
+
+                line = ''.join((line, ' ' * last_spaces, '; ', comment))
             else:
-                yield ';'
-        else:
-            yield line
+                line = ';'
+        
+        yield line
+
+        last_line = line
 
 class TpBlock(object):
     def __init__(self, lines=None):
@@ -31,9 +43,6 @@ class TpBlock(object):
             self.lines = lines
         else:
             self.lines = []
-
-    def append(self, lines):
-        self.lines.append(line)
 
     def get_lines(self):
         for line in format_comments(self.lines):
@@ -162,6 +171,8 @@ class TpVars(object):
 
 
 class TpPlcBlock(object):
+    _ref_res = [re.compile('([pmqi]\([^\)]+\))', flags=re.IGNORECASE),
+                re.compile('([pmqi]\d+)', flags=re.IGNORECASE)]
     def __init__(self, number, clear=True):
         self.number = int(number)
         self.clear = bool(clear)
@@ -181,8 +192,17 @@ class TpPlcBlock(object):
             word = get_first_word(line)
             if word in deindent_immediate:
                 indent -= indent_amount
+            
+            if line.strip():
+                line = ''.join((' ' * indent, line.lstrip()))
+            else:
+                line = ''
 
-            self.lines[i] = (''.join((' ' * indent, line.lstrip())), comment)
+            self.lines[i] = (line, comment)
+            
+            if comment:
+                if 'settings' in comment:
+                    print('"%s" comment: "%s"'  % (line, comment))
 
             if word in indent_words:
                 indent += indent_amount
@@ -194,15 +214,9 @@ class TpPlcBlock(object):
             yield 'OPEN PLC %d CLEAR' % self.number
         else:
             yield 'OPEN PLC %d' % self.number
-        
-        lengths = [len(line) for line, comment in self.lines]
-        comment_col = max(lengths) + 1
-
-        for line, comment in self.lines:
-            if comment:
-                yield ''.join((line, ' ' * (comment_col - len(line)), '; ', comment))
-            else:
-                yield line
+       
+        for line in format_comments(self.lines):
+            yield line
         
         yield 'CLOSE'
 
@@ -212,10 +226,8 @@ class TpPlcBlock(object):
 
     def find_references(self):
         refs = set()
-        ref_res = [re.compile('([pmqi]\([^\)]+\))', flags=re.IGNORECASE),
-                   re.compile('([pmqi]\d+)', flags=re.IGNORECASE)]
         for line, comment in self:
-            for ref_re in ref_res:
+            for ref_re in self._ref_res:
                 for ref in ref_re.findall(line):
                     refs.add(ref)
 
