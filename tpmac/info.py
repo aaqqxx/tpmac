@@ -212,8 +212,8 @@ class Info(object):
             data[key] = info[1:]
 
     def __getitem__(self, key):
-        if key in self._lower_keys:
-            key = self._lower_keys[key]
+        if key.lower() in self._lower_keys:
+            key = self._lower_keys[key.lower()]
 
         return self.data[key]
 

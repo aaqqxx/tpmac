@@ -3001,18 +3001,18 @@ i5093	A/D Ring Convert Codes	A/D Processing Table I-Variables	174
 i5094	A/D Ring Convert Codes	A/D Processing Table I-Variables	174
 i5095	A/D Ring Convert Codes	A/D Processing Table I-Variables	174
 i5096	A/D Ring Convert Codes	A/D Processing Table I-Variables	174
-i5111	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i5211	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i5311	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i5411	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i5511	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i5611	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i6111	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i6211	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i6311	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i6411	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i6511	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
-i6611	Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
+i5111	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i5211	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i5311	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i5411	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i5511	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i5611	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i6111	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i6211	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i6311	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i6411	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i6511	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
+i6611	Coordinate System x User Countdown Timer 1	Coordinate System I-Variables	176
 i5112	Coordinate System 1 User Countdown Timer 2	Coordinate System I-Variables	176
 i5212	Coordinate System 2 User Countdown Timer 2	Coordinate System I-Variables	176
 i5312	Coordinate System 3 User Countdown Timer 2	Coordinate System I-Variables	176
@@ -3037,42 +3037,42 @@ i6313	Coordinate System 9 Segmentation Time	Coordinate System I-Variables	177
 i6413	Coordinate System 10 Segmentation Time	Coordinate System I-Variables	177
 i6513	Coordinate System 11 Segmentation Time	Coordinate System I-Variables	177
 i6613	Coordinate System 12 Segmentation Time	Coordinate System I-Variables	177
-i5114	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i5214	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i5314	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i5414	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i5514	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i5614	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i6114	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i6214	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i6314	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i6414	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i6514	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i6614	Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
-i5115	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i5215	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i5315	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i5415	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i5515	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i5615	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i6115	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i6215	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i6315	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i6415	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i6515	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i6615	Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
-i5116	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i5216	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i5316	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i5416	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i5516	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i5616	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i6116	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i6216	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i6316	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i6416	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i6516	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
-i6616	Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
+i5114	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i5214	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i5314	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i5414	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i5514	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i5614	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i6114	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i6214	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i6314	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i6414	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i6514	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i6614	Coordinate System x End-of-Move Anticipation Time	Coordinate System I-Variables	178
+i5115	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i5215	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i5315	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i5415	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i5515	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i5615	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i6115	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i6215	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i6315	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i6415	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i6515	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i6615	Coordinate System x Segmentation Override	Coordinate System I-Variables	178
+i5116	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i5216	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i5316	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i5416	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i5516	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i5616	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i6116	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i6216	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i6316	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i6416	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i6516	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
+i6616	Coordinate System x Segmentation Override Slew	Coordinate System I-Variables	179
 i5120	Coordinate System 1 Lookahead Length	Coordinate System I-Variables	180
 i5220	Coordinate System 2 Lookahead Length	Coordinate System I-Variables	180
 i5320	Coordinate System 3 Lookahead Length	Coordinate System I-Variables	180
@@ -3121,90 +3121,90 @@ i6353	Coordinate System 9 Step Mode Control	Coordinate System I-Variables	182
 i6453	Coordinate System 10 Step Mode Control	Coordinate System I-Variables	182
 i6553	Coordinate System 11 Step Mode Control	Coordinate System I-Variables	182
 i6653	Coordinate System 12 Step Mode Control	Coordinate System I-Variables	182
-i5178	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i5278	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i5378	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i5478	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i5578	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i5678	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i6178	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i6278	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i6378	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i6478	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i6578	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i6678	Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
-i5179	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i5279	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i5379	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i5479	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i5579	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i5679	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i6179	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i6279	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i6379	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i6479	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i6579	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i6679	Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
-i5181	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i5281	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i5381	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i5481	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i5581	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i5681	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i6181	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i6281	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i6381	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i6481	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i6581	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i6681	Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
-i5182	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i5282	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i5382	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i5482	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i5582	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i5682	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i6182	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i6282	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i6382	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i6482	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i6582	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i6682	Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
-i5183	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i5283	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i5383	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i5483	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i5583	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i5683	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i6183	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i6283	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i6383	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i6483	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i6583	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i6683	Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
-i5184	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i5284	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i5384	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i5484	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i5584	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i5684	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i6184	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i6284	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i6384	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i6484	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i6584	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i6684	Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
-i5185	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i5285	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i5385	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i5485	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i5585	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i5685	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i6185	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i6285	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i6385	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i6485	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i6585	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
-i6685	Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
+i5178	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i5278	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i5378	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i5478	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i5578	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i5678	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i6178	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i6278	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i6378	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i6478	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i6578	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i6678	Coordinate System x Maximum Circle Acceleration	Coordinate System I-Variables	182
+i5179	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i5279	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i5379	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i5479	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i5579	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i5679	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i6179	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i6279	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i6379	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i6479	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i6579	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i6679	Coordinate System x Rapid Move Mode Control	Coordinate System I-Variables	183
+i5181	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i5281	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i5381	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i5481	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i5581	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i5681	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i6181	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i6281	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i6381	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i6481	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i6581	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i6681	Coordinate System x Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+i5182	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i5282	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i5382	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i5482	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i5582	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i5682	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i6182	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i6282	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i6382	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i6482	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i6582	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i6682	Coordinate System x Blend Disable Dwell Time	Coordinate System I-Variables	184
+i5183	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i5283	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i5383	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i5483	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i5583	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i5683	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i6183	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i6283	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i6383	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i6483	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i6583	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i6683	Coordinate System x Corner Blend Break Point	Coordinate System I-Variables	185
+i5184	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i5284	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i5384	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i5484	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i5584	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i5684	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i6184	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i6284	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i6384	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i6484	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i6584	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i6684	Coordinate System x Outside Corner Stop Point Control	Coordinate System I-Variables	186
+i5185	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i5285	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i5385	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i5485	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i5585	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i5685	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i6185	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i6285	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i6385	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i6485	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i6585	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
+i6685	Coordinate System x Corner Dwell Break Point	Coordinate System I-Variables	186
 i5186	Coordinate System 1 Alternate Feedrate	Coordinate System I-Variables	187
 i5286	Coordinate System 2 Alternate Feedrate	Coordinate System I-Variables	187
 i5386	Coordinate System 3 Alternate Feedrate	Coordinate System I-Variables	187
@@ -3277,18 +3277,18 @@ i6391	Coordinate System 9 Default Working Program Number	Coordinate System I-Var
 i6491	Coordinate System 10 Default Working Program Number	Coordinate System I-Variables	189
 i6591	Coordinate System 11 Default Working Program Number	Coordinate System I-Variables	189
 i6691	Coordinate System 12 Default Working Program Number	Coordinate System I-Variables	189
-i5192	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i5292	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i5392	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i5492	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i5592	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i5692	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i6192	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i6292	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i6392	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i6492	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i6592	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
-i6692	Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
+i5192	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i5292	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i5392	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i5492	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i5592	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i5692	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i6192	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i6292	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i6392	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i6492	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i6592	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
+i6692	Coordinate System x Move Blend Disable	Coordinate System I-Variables	190
 i5193	Coordinate System 1 Time Base Control Address	Coordinate System I-Variables	190
 i5293	Coordinate System 2 Time Base Control Address	Coordinate System I-Variables	190
 i5393	Coordinate System 3 Time Base Control Address	Coordinate System I-Variables	190
