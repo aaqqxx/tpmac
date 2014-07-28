@@ -52,79 +52,103 @@ def int_to_ivar(i):
 
 ivars = {}
 
-def eval_ivar(f, ivar, category, desc):
+def _eval_ivar(f, page, ivar, category, desc):
     if '/' in ivar:
         for iv in ivar.split('/'):
-            eval_ivar(f, iv, category, desc)
+            _eval_ivar(f, page, iv, category, desc)
         return
     elif '-' in ivar:
         r0, r1 = [ivar_to_int(iv) for iv in ivar.split('-')]
         for i in range(r0, r1 + 1):
-            eval_ivar(f, int_to_ivar(i), category, desc)
+            _eval_ivar(f, page, int_to_ivar(i), category, desc)
     else: 
         try:
             ivar_int = ivar_to_int(ivar)
         except:
             print('Failed: %s' % ivar)
         else:
-            print('i%d\t%s\t%s' % (ivar_int, desc, category), file=f)
+            print('i%d\t%s\t%s\t%d' % (ivar_int, desc, category, page), file=f)
         
             if ivar in ivars:
                 print('Duplicate', ivar, ivars[ivar], '//', (category, desc))
 
-            ivars[ivar] = (category, desc)
+            ivars[ivar] = (category, desc, page)
+
+
+def eval_ivar(f, page, ivar, category, desc):
+    if 'Motor xx' in desc:
+        class_, replace = 'motor', 'xx'
+    elif 'Servo IC m Channel n' in desc:
+        class_, replace = 'servo', 'mn'
+    elif 'Servo IC m' in desc:
+        class_, replace = 'servo0', 'm'
+    elif ('MACRO IC Channel n' in desc) or ('MACRO IC Encoder n' in desc):
+        class_, replace = 'macro', 'n'
+    elif 'Coordinate System' in desc:
+        class_, replace = 'cs', 'sx'
+    else:
+        class_ = ''
+    
+    if class_:
+        range_ = ranges[class_]
+        for replace_with, desc_replace in range_:
+            _eval_ivar(f, page,
+                      ivar.replace(replace, replace_with), 
+                      replace_multiple(category, *desc_replace),
+                      replace_multiple(desc, *desc_replace))
+    else:
+        _eval_ivar(f, page, ivar, category, desc)
 
 def replace_multiple(s, *from_to):
     for from_, to in from_to:
         s = s.replace(from_, to)
     return s
 
-def generate_ivar_info(input_fn, output_fn):
+def generate_toc_info(input_fn, output_fn, only_ivars=False):
     category = ''
+    re_istart = re.compile('(I[sxmn0-9][sxmn0-9-]*)')
+    
+    all_toc = []
+
+    category = ''
+
     with open(output_fn, 'wt') as f:
         print('# vi: ts=30 sw=30', file=f)
         with open(input_fn, 'rt') as inf:
             for line in inf.readlines():
-                line = line.strip()
-                if line.startswith('*'):
-                    category = line[1:].strip()
+                if not line.strip():
                     continue
-                elif line.startswith('#'):
+                elif '....' not in line:
                     continue
 
-                if 'Motor xx' in line:
-                    class_, replace = 'motor', 'xx'
-                elif 'Servo IC m Channel n' in line:
-                    class_, replace = 'servo', 'mn'
-                elif 'Servo IC m' in line:
-                    class_, replace = 'servo0', 'm'
-                elif ('MACRO IC Channel n' in line) or ('MACRO IC Encoder n' in line):
-                    class_, replace = 'macro', 'n'
-                elif 'Coordinate System' in line:
-                    class_, replace = 'cs', 'sx'
-                else:
-                    class_ = ''
+                is_category = not line.startswith(' ')
                 
-                # print('->', line)
+                line, page = line.split('....', 1)
+                line = line.rstrip('.').strip()
+                page = int(page.lstrip('.'))
+                
+                line = line.replace('\t', ' ')
+                line = line.replace('  ', ' ')
 
-                ivar, desc = line.split(' ', 1)
-                if class_:
-                    range_ = ranges[class_]
-                    for replace_with, desc_replace in range_:
-                        eval_ivar(f, ivar.replace(replace, replace_with), 
-                                  replace_multiple(category, *desc_replace),
-                                  replace_multiple(desc, *desc_replace))
-                else:
-                    eval_ivar(f, ivar, category, desc)
-                    print(line, file=sys.stderr)
+                all_toc.append((page, line))
+                
+                if is_category:
+                    category = line
+
+                if only_ivars:
+                    if not is_category:
+                        m = re_istart.match(line)
+                        if m:
+                            ivar, desc = line.split(' ', 1)
+                            eval_ivar(f, page, ivar, category, desc.strip())
+                    continue
+
+                print('%s\t%s\t%d' % (line, category, page), file=f)
 
 def generate_mem_info(fn, output_fn):
     addr_info = {}
 
     whitespace = re.compile('[\s]')
-
-    clear_re = re.compile('(.*)->\*')
-    m_re = re.compile('M(\d+)->')
 
     def fix_comment(s):
         if s.startswith('&'):
@@ -134,7 +158,6 @@ def generate_mem_info(fn, output_fn):
         
         return s
     
-    mem_fix = re.compile('\$0([^,])')
     for line in open(fn, 'rt').readlines():
         line = line.strip()
         if ';' in line:
@@ -153,14 +176,11 @@ def generate_mem_info(fn, output_fn):
                 continue
             
             mvar = mvar.upper()
-
-            repl = 1
-            while repl > 0:
-                mem, repl = re.subn('\$0([^,])', r'$\1', mem)
+            mem = util.clean_addr(mem)
             
             if not comment:
                 print('%s points to %s which is %s' % (mvar, mem, comment))
-               
+            
             addr_info[mem] = fix_comment(comment)
 
     with open(output_fn, 'wt') as f:
@@ -171,24 +191,29 @@ def generate_mem_info(fn, output_fn):
 
 
 class Info(object):
-    def __init__(self, fn, delim='\t', lower_case_keys=True):
+    def __init__(self, fn, delim='\t'):
         self.data = data = {}
+        self._lower_keys = {}
         for line in open(fn, 'rt').readlines():
             line = line.strip()
             if line.startswith('#'):
                 continue
 
             info = line.split(delim)
-            if lower_case_keys:
-                info[0] = info[0].lower()
-
-            data[info[0]] = info[1:]
+            
+            key = info[0]
+            self._lower_keys[key.lower()] = key
+            data[key] = info[1:]
     
     def __getitem__(self, key):
+        if key in self._lower_keys:
+            key = self._lower_keys[key]
+
         return self.data[key]
 
     def search(self, text, in_keys=True, in_data=True, 
                case_insensitive=True):
+        # note: very inefficient search
         if case_insensitive:
             text = text.lower()
 
@@ -206,22 +231,28 @@ class Info(object):
             if text in s.lower():
                 yield (key, values)
 
-# raw ivar file should be formatted roughly as in the PDF, see
-# the geobrick_lv one for example
+# table of contents file generated using:
+#    pdftotext -layout turbo_srm.pdf and partially hand-tweaked
+# see the geobrick_lv one for example
 RAW_IVAR_FN = 'ivars_raw.txt'
+RAW_TOC_FN = 'contents.txt'
 # memory information should be a commented script containing
 # mappings from (arbitrary) m variables to memory addresses.
 # the address and comment for that line then get stored.
 RAW_MEM_FN = 'm_variables.pmc'
 
-IVAR_FN = 'ivars.csv'
-MEM_FN = 'mem.csv'
+# the actual information files -- tsv (tab-separated values)
+IVAR_FN = 'ivars.tsv'
+MEM_FN = 'mem.tsv'
+TOC_FN = 'contents.tsv'
 
 ivar_info = None
 mem_info = None
+toc_info = None
 
-def load_settings(profile, ivar_fn=IVAR_FN, mem_fn=MEM_FN):
-    global ivar_info, mem_info, loaded_profile
+def load_settings(profile, ivar_fn=IVAR_FN, mem_fn=MEM_FN,
+                 toc_fn=TOC_FN):
+    global ivar_info, mem_info, toc_info
     
     profile_path = util.get_profile_path(profile)
 
@@ -231,14 +262,21 @@ def load_settings(profile, ivar_fn=IVAR_FN, mem_fn=MEM_FN):
     mem_fn = os.path.join(profile_path, mem_fn)
     mem_info = Info(mem_fn)
 
-def generate_settings(profile, ivar_fns=(RAW_IVAR_FN, IVAR_FN),
-                      mem_fns=(RAW_MEM_FN, MEM_FN)):
+    toc_fn = os.path.join(profile_path, toc_fn)
+    toc_info = Info(toc_fn)
+
+def generate_settings(profile, ivar_fns=(RAW_TOC_FN, IVAR_FN),
+                      mem_fns=(RAW_MEM_FN, MEM_FN),
+                      toc_fns=(RAW_TOC_FN, TOC_FN)):
     profile_path = util.get_profile_path(profile)
 
     ivar_fns = [os.path.join(profile_path, fn) for fn in ivar_fns]
     mem_fns = [os.path.join(profile_path, fn) for fn in mem_fns]
-    generate_ivar_info(*ivar_fns)
+    toc_fns = [os.path.join(profile_path, fn) for fn in toc_fns]
+
+    generate_toc_info(ivar_fns[0], ivar_fns[1], only_ivars=True)
     generate_mem_info(*mem_fns)
+    generate_toc_info(*toc_fns)
     
     
 if __name__ == '__main__':

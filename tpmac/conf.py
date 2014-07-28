@@ -116,7 +116,7 @@ class TpVar(object):
     
     @property
     def var_str(self):
-        return '%s%s' % (self.type_.lower(), self.var)
+        return '%s%s' % (self.type_, self.var)
 
     def config_str(self, config=None):
         if self.type_ == 'm':
@@ -142,10 +142,10 @@ class TpVar(object):
 
         elif self.type_ == 'i':
             try:
-                desc = info.ivar_info[self.var_str][0]
+                desc, category, page = info.ivar_info[self.var_str]
             except KeyError:
                 return
-
+            
         if self.comment:
             if desc in self.comment:
                 pass
@@ -153,8 +153,19 @@ class TpVar(object):
                 self.comment = '%s [%s]' % (self.comment, desc)
         else:
             self.comment = desc
+        
 
-            
+    @property
+    def page(self):
+        if self.type_ == 'i':
+            try:
+               desc, category, page  = info.ivar_info[self.var_str]
+            except KeyError:
+                pass
+            else: 
+                return int(page)
+        
+
 class TpVars(object):
     def __init__(self, type_):
         self.type_ = type_

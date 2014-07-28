@@ -1,0 +1,753 @@
+# vi: ts=30 sw=30
+INTRODUCTION	INTRODUCTION	21
+What is Turbo PMAC?	What is Turbo PMAC?	21
+What is New about Turbo PMAC?	What is New about Turbo PMAC?	21
+How do I Convert a PMAC Application?	How do I Convert a PMAC Application?	22
+How do I use this Manual?	How do I use this Manual?	22
+TURBO PMAC VARIABLE AND COMMAND SUMMARY	TURBO PMAC VARIABLE AND COMMAND SUMMARY	23
+Notes	Notes	23
+Definitions	Definitions	23
+On-Line Commands	On-Line Commands	24
+On-line Global Commands	On-Line Commands	24
+On-line Coordinate System Commands	On-Line Commands	27
+On-line Motor Commands	On-Line Commands	29
+Motion Program Commands	Motion Program Commands	30
+PLC Program Commands	PLC Program Commands	33
+TURBO PMAC GLOBAL I-VARIABLES	TURBO PMAC GLOBAL I-VARIABLES	35
+General Global Setup I-Variables	General Global Setup I-Variables	35
+I0    Serial Card Number	General Global Setup I-Variables	35
+I1    Serial Port Mode	General Global Setup I-Variables	36
+I2    Control Panel Port Activation	General Global Setup I-Variables	36
+I3    I/O Handshake Control	General Global Setup I-Variables	37
+I4    Communications Integrity Mode	General Global Setup I-Variables	38
+I5    PLC Program Control	General Global Setup I-Variables	39
+I6    Error Reporting Mode	General Global Setup I-Variables	39
+I7    Phase Cycle Extension	General Global Setup I-Variables	40
+I8    Real-Time Interrupt Period	General Global Setup I-Variables	41
+I9    Full/Abbreviated Listing Control	General Global Setup I-Variables	42
+I10   Servo Interrupt Time	General Global Setup I-Variables	42
+I11   Programmed Move Calculation Time	General Global Setup I-Variables	43
+I12     Lookahead Time Spline Enable	General Global Setup I-Variables	44
+I13   Foreground In-Position Check Enable	General Global Setup I-Variables	44
+I14   Temporary Buffer Save Enable	General Global Setup I-Variables	45
+I15   Degree/Radian Control for User Trig Functions	General Global Setup I-Variables	45
+I16   Rotary Buffer Request On Point	General Global Setup I-Variables	45
+I17   Rotary Buffer Request Off Point	General Global Setup I-Variables	46
+I18   Fixed Buffer Full Warning Point	General Global Setup I-Variables	46
+I19   Clock Source I-Variable Number (Turbo PMAC2 only)	General Global Setup I-Variables	46
+I20   MACRO IC 0 Base Address (Turbo PMAC2 only)	General Global Setup I-Variables	48
+I21   MACRO IC 1 Base Address (Turbo PMAC2 only)	General Global Setup I-Variables	48
+I22   MACRO IC 2 Base Address (Turbo PMAC2 only)	General Global Setup I-Variables	49
+I23   MACRO IC 3 Base Address (Turbo PMAC2 only)	General Global Setup I-Variables	50
+I24   Main DPRAM Base Address	General Global Setup I-Variables	50
+I26   UMAC Electrical MACRO Enable	General Global Setup I-Variables	51
+I27   Alternate TWS Input Format	General Global Setup I-Variables	51
+I28  Display Port Disable	General Global Setup I-Variables	52
+I29  Multiplexer Port Alternate Address	General Global Setup I-Variables	52
+I30  Compensation Table Wrap Enable	General Global Setup I-Variables	53
+I35  Brick LV & Controller E-Stop Enable	General Global Setup I-Variables	53
+I36  Enable/Abort Separation Control	General Global Setup I-Variables	54
+I37  Additional Wait States	General Global Setup I-Variables	55
+I38  In-Line CALL Enable	General Global Setup I-Variables	55
+I39  UBUS Accessory ID Variable Display Control	General Global Setup I-Variables	56
+I40  Watchdog Timer Reset Value	General Global Setup I-Variables	57
+I41  I-Variable Lockout Control	General Global Setup I-Variables	57
+I42  Spline/PVT Time Control Mode	General Global Setup I-Variables	58
+I43  Auxiliary/Main Serial Port Parser Disable	General Global Setup I-Variables	58
+I44  PMAC Ladder Program Enable {Special Firmware Only}	General Global Setup I-Variables	59
+I45  Foreground Binary Rotary Buffer Transfer Enable	General Global Setup I-Variables	59
+I46  P & Q-Variable Storage Location	General Global Setup I-Variables	59
+I47  DPRAM Motor Data Foreground Reporting Period	General Global Setup I-Variables	60
+I48  DPRAM Motor Data Foreground Reporting Enable	General Global Setup I-Variables	60
+I49  DPRAM Background Data Reporting Enable	General Global Setup I-Variables	61
+I50  DPRAM Background Data Reporting Period	General Global Setup I-Variables	61
+I51  Compensation Table Enable	General Global Setup I-Variables	61
+I52  CPU Frequency Control	General Global Setup I-Variables	61
+I53  Auxiliary Serial Port Baud Rate Control	General Global Setup I-Variables	62
+I54  Serial Port Baud Rate Control	General Global Setup I-Variables	63
+I55  DPRAM Background Variable Buffers Enable	General Global Setup I-Variables	63
+I56  DPRAM ASCII Communications Interrupt Enable	General Global Setup I-Variables	63
+I57  DPRAM Motor Data Background Reporting Enable	General Global Setup I-Variables	64
+I58  DPRAM ASCII Communications Enable	General Global Setup I-Variables	64
+I59  Motor/C.S. Group Select	General Global Setup I-Variables	65
+I60  Filtered Velocity Sample Time	General Global Setup I-Variables	65
+I61  Filtered Velocity Shift	General Global Setup I-Variables	66
+I62  Internal Message Carriage Return Control	General Global Setup I-Variables	66
+I63  Control-X Echo Enable	General Global Setup I-Variables	67
+I64  Internal Response Tag Enable	General Global Setup I-Variables	67
+I65  User Configuration Variable	General Global Setup I-Variables	67
+I67  Modbus TCP Buffer Start Address	General Global Setup I-Variables	68
+I68  Coordinate System Activation Control	General Global Setup I-Variables	68
+I69  Modbus TCP Software Control Panel Start Address	General Global Setup I-Variables	69
+MACRO Ring Configuration I-Variables	MACRO Ring Configuration I-Variables	69
+I70  MACRO IC 0 Node Auxiliary Register Enable	MACRO Ring Configuration I-Variables	69
+I71  MACRO IC 0 Node Protocol Type Control	MACRO Ring Configuration I-Variables	70
+I72  MACRO IC 1 Node Auxiliary Register Enable	MACRO Ring Configuration I-Variables	70
+I73  MACRO IC 1 Node Protocol Type Control	MACRO Ring Configuration I-Variables	71
+I74  MACRO IC 2 Node Auxiliary Register Enable	MACRO Ring Configuration I-Variables	71
+I75  MACRO IC 2 Node Protocol Type Control	MACRO Ring Configuration I-Variables	72
+I76  MACRO IC 3 Node Auxiliary Register Enable	MACRO Ring Configuration I-Variables	72
+I77  MACRO IC 3 Node Protocol Type Control	MACRO Ring Configuration I-Variables	73
+I78  MACRO Type 1 Master/Slave Communications Timeout	MACRO Ring Configuration I-Variables	73
+I79  MACRO Type 1 Master/Master Communications Timeout	MACRO Ring Configuration I-Variables	74
+I80  MACRO Ring Check Period	MACRO Ring Configuration I-Variables	74
+I81  MACRO Maximum Ring Error Count	MACRO Ring Configuration I-Variables	75
+I82  MACRO Minimum Sync Packet Count	MACRO Ring Configuration I-Variables	75
+I83  MACRO Parallel Ring Enable Mask	MACRO Ring Configuration I-Variables	75
+I84  MACRO IC # for Master Communications	MACRO Ring Configuration I-Variables	76
+I85  MACRO Ring Order Number	MACRO Ring Configuration I-Variables	76
+VME/DPRAM Setup I-Variables	VME/DPRAM Setup I-Variables	77
+I90   VME Address Modifier	VME/DPRAM Setup I-Variables	77
+I91   VME Address Modifier Don’t Care Bits	VME/DPRAM Setup I-Variables	77
+I92   VME Base Address Bits A31-A24	VME/DPRAM Setup I-Variables	77
+I93   VME Mailbox Base Address Bits A23-A16 ISA DPRAM Base Address Bits A23-A16	VME/DPRAM Setup I-Variables	78
+I94   VME Mailbox Base Address Bits A15-A08 ISA DPRAM Base Address Bits A15-A14 & Control	VME/DPRAM Setup I-Variables	78
+I95   VME Interrupt Level	VME/DPRAM Setup I-Variables	79
+I96   VME Interrupt Vector	VME/DPRAM Setup I-Variables	79
+I97   VME DPRAM Base Address Bits A23-A20	VME/DPRAM Setup I-Variables	80
+I98   VME DPRAM Enable	VME/DPRAM Setup I-Variables	80
+I99   VME Address Width Control	VME/DPRAM Setup I-Variables	80
+Motor Setup I-Variables	Motor Setup I-Variables	81
+Motor Definition I-Variables	Motor Definition I-Variables	81
+Ixx00    Motor xx Activation Control	Motor Definition I-Variables	81
+Ixx01    Motor xx Commutation Enable	Motor Definition I-Variables	81
+Ixx02    Motor xx Command Output Address	Motor Definition I-Variables	82
+Ixx03    Motor xx Position Loop Feedback Address	Motor Definition I-Variables	85
+Ixx04    Motor xx Velocity Loop Feedback Address	Motor Definition I-Variables	86
+Ixx05    Motor xx Master Position Address	Motor Definition I-Variables	87
+Ixx06    Motor xx Position Following Enable and Mode	Motor Definition I-Variables	87
+Ixx07    Motor xx Master (Handwheel) Scale Factor	Motor Definition I-Variables	88
+Ixx08    Motor xx Position Scale Factor	Motor Definition I-Variables	88
+Ixx09    Motor xx Velocity-Loop Scale Factor	Motor Definition I-Variables	88
+Ixx10    Motor xx Power-On Servo Position Address	Motor Definition I-Variables	89
+Motor Safety I-Variables	Motor Safety I-Variables	94
+Ixx11    Motor xx Fatal Following Error Limit	Motor Safety I-Variables	94
+Ixx12    Motor xx Warning Following Error Limit	Motor Safety I-Variables	94
+Ixx13    Motor xx Positive Software Position Limit	Motor Safety I-Variables	95
+Ixx14    Motor xx Negative Software Position Limit	Motor Safety I-Variables	96
+Ixx15    Motor xx Abort/Limit Deceleration Rate	Motor Safety I-Variables	97
+Ixx16    Motor xx Maximum Program Velocity	Motor Safety I-Variables	98
+Ixx17    Motor xx Maximum Program Acceleration	Motor Safety I-Variables	98
+Ixx19    Motor xx Maximum Jog/Home Acceleration	Motor Safety I-Variables	100
+Motor Motion I-Variables	Motor Motion I-Variables	100
+Ixx20    Motor xx Jog/Home Acceleration Time	Motor Motion I-Variables	100
+Ixx21    Motor xx Jog/Home S-Curve Time	Motor Motion I-Variables	101
+Ixx22    Motor xx Jog Speed	Motor Motion I-Variables	101
+Ixx23    Motor xx Home Speed and Direction	Motor Motion I-Variables	101
+Ixx24    Motor xx Flag Mode Control	Motor Motion I-Variables	101
+Ixx25    Motor xx Flag Address	Motor Motion I-Variables	104
+Ixx26    Motor xx Home Offset	Motor Motion I-Variables	107
+Ixx27    Motor xx Position Rollover Range	Motor Motion I-Variables	108
+Ixx28    Motor xx In-Position Band	Motor Motion I-Variables	109
+Ixx29    Motor xx Output/First Phase Offset	Motor Motion I-Variables	110
+Motor xx PID Servo Setup I-Variables	Motor xx PID Servo Setup I-Variables	111
+Ixx30    Motor xx PID Proportional Gain	Motor xx PID Servo Setup I-Variables	111
+Ixx31    Motor xx PID Derivative Gain	Motor xx PID Servo Setup I-Variables	111
+Ixx32    Motor xx PID Velocity Feedforward Gain	Motor xx PID Servo Setup I-Variables	112
+Ixx33    Motor xx PID Integral Gain	Motor xx PID Servo Setup I-Variables	112
+Ixx34    Motor xx PID Integration Mode	Motor xx PID Servo Setup I-Variables	113
+Ixx35    Motor xx PID Acceleration Feedforward Gain	Motor xx PID Servo Setup I-Variables	113
+Ixx36    Motor xx PID Notch Filter Coefficient N1	Motor xx PID Servo Setup I-Variables	113
+Ixx37    Motor xx PID Notch Filter Coefficient N2	Motor xx PID Servo Setup I-Variables	114
+Ixx38    Motor xx PID Notch Filter Coefficient D1	Motor xx PID Servo Setup I-Variables	114
+Ixx39    Motor xx PID Notch Filter Coefficient D2	Motor xx PID Servo Setup I-Variables	114
+Ixx40    Motor xx Net Desired Position Filter Gain	Motor xx PID Servo Setup I-Variables	114
+Ixx41    Motor xx Desired Position Limit Band	Motor xx PID Servo Setup I-Variables	115
+Ixx42    Motor xx Amplifier Flag Address	Motor xx PID Servo Setup I-Variables	115
+Ixx43    Motor xx Overtravel-Limit Flag Address	Motor xx PID Servo Setup I-Variables	117
+Ixx44    Motor xx MACRO Slave Command Address	Motor xx PID Servo Setup I-Variables	118
+Motor Servo and Commutation Modifiers	Motor Servo and Commutation Modifiers	119
+Ixx55    Motor xx Commutation Table Address Offset	Motor Servo and Commutation Modifiers	119
+Ixx56    Motor xx Commutation Delay Compensation	Motor Servo and Commutation Modifiers	120
+Ixx57    Motor xx Continuous Current Limit	Motor Servo and Commutation Modifiers	120
+Ixx58    Motor xx Integrated Current Limit	Motor Servo and Commutation Modifiers	122
+Ixx59    Motor xx User-Written Servo/Phase Enable	Motor Servo and Commutation Modifiers	123
+Ixx60    Motor xx Servo Cycle Period Extension Period	Motor Servo and Commutation Modifiers	123
+Ixx61    Motor xx Current-Loop Integral Gain	Motor Servo and Commutation Modifiers	124
+Ixx62    Motor xx Current-Loop Forward-Path Proportional Gain	Motor Servo and Commutation Modifiers	124
+Ixx63    Motor xx Integration Limit	Motor Servo and Commutation Modifiers	124
+Ixx64    Motor xx Deadband Gain Factor	Motor Servo and Commutation Modifiers	125
+Ixx65    Motor xx Deadband Size	Motor Servo and Commutation Modifiers	125
+Ixx66    Motor xx PWM Scale Factor	Motor Servo and Commutation Modifiers	126
+Ixx67    Motor xx Position Error Limit	Motor Servo and Commutation Modifiers	126
+Ixx68    Motor xx Friction Feedforward	Motor Servo and Commutation Modifiers	127
+Ixx69    Motor xx Output Command Limit	Motor Servo and Commutation Modifiers	127
+Motor Commutation Setup I-Variables	Motor Commutation Setup I-Variables	129
+Ixx70    Motor xx Number of Commutation Cycles (N)	Motor Commutation Setup I-Variables	129
+Ixx71    Motor xx Counts per N Commutation Cycles	Motor Commutation Setup I-Variables	129
+Ixx72    Motor xx Commutation Phase Angle	Motor Commutation Setup I-Variables	130
+Ixx73    Motor xx Phase Finding Output Value	Motor Commutation Setup I-Variables	131
+Ixx74    Motor xx Phase Finding Time	Motor Commutation Setup I-Variables	132
+Ixx75    Motor xx Phase Position Offset	Motor Commutation Setup I-Variables	132
+Ixx76    Motor xx Current-Loop Back-Path Proportional Gain	Motor Commutation Setup I-Variables	134
+Ixx77    Motor xx Magnetization Current	Motor Commutation Setup I-Variables	134
+Ixx78    Motor xx Slip Gain	Motor Commutation Setup I-Variables	134
+Ixx79    Motor xx Second Phase Offset	Motor Commutation Setup I-Variables	135
+Ixx80    Motor xx Power-Up Mode	Motor Commutation Setup I-Variables	136
+Ixx81    Motor xx Power-On Phase Position Address	Motor Commutation Setup I-Variables	137
+Ixx82    Motor xx Current-Loop Feedback Address	Motor Commutation Setup I-Variables	143
+Ixx83    Motor xx Commutation Position Address	Motor Commutation Setup I-Variables	145
+Ixx84    Motor xx Current-Loop Feedback Mask Word	Motor Commutation Setup I-Variables	147
+Further Motor I-Variables	Further Motor I-Variables	148
+Ixx85    Motor xx Backlash Take-up Rate	Further Motor I-Variables	148
+Ixx86    Motor xx Backlash Size	Further Motor I-Variables	148
+Ixx87    Motor xx Backlash Hysteresis	Further Motor I-Variables	148
+Ixx88    Motor xx In-Position Number of Scans	Further Motor I-Variables	149
+Ixx90    Motor xx Rapid Mode Speed Select	Further Motor I-Variables	149
+Ixx91    Motor xx Power-On Phase Position Format	Further Motor I-Variables	149
+Ixx92    Motor xx Jog Move Calculation Time	Further Motor I-Variables	152
+Ixx95    Motor xx Power-On Servo Position Format	Further Motor I-Variables	152
+Ixx96    Motor xx Command Output Mode Control	Further Motor I-Variables	156
+Ixx97    Motor xx Position Capture & Trigger Mode	Further Motor I-Variables	157
+Ixx98    Motor xx Third-Resolver Gear Ratio	Further Motor I-Variables	157
+Ixx99    Motor xx Second-Resolver Gear Ratio	Further Motor I-Variables	158
+Supplemental Motor Setup I-Variables	Supplemental Motor Setup I-Variables	159
+Iyy00/50     Motor xx Extended Servo Algorithm Enable	Supplemental Motor Setup I-Variables	159
+Iyy10-Iyy39/Iyy60-Iyy89     Motor xx Extended Servo Algorithm Gains	Supplemental Motor Setup I-Variables	160
+System Configuration Reporting	System Configuration Reporting	161
+I4900 Servo ICs Present	System Configuration Reporting	161
+I4901 Servo IC Type	System Configuration Reporting	161
+I4902 MACRO ICs Present	System Configuration Reporting	162
+I4903 MACRO IC Types	System Configuration Reporting	162
+I4904 Dual-Ported RAM ICs Present	System Configuration Reporting	163
+I4908 End of Open Memory	System Configuration Reporting	164
+I4909 Turbo CPU ID Configuration	System Configuration Reporting	164
+I4910-I4925 Servo IC Card Identification	System Configuration Reporting	165
+I4926-I4941 MACRO IC Card Identification	System Configuration Reporting	167
+I4942-I4949 DPRAM IC Card Identification	System Configuration Reporting	168
+I4950-I4965 I/O IC Card Identification	System Configuration Reporting	169
+Data Gathering I-Variables	Data Gathering I-Variables	170
+I5000   Data Gathering Buffer Location and Mode	Data Gathering I-Variables	170
+I5001-I5048 Data Gathering Source 1-48 Address	Data Gathering I-Variables	170
+I5049 Data Gathering Period	Data Gathering I-Variables	171
+I5050 Data Gathering Selection Mask 1	Data Gathering I-Variables	171
+I5051 Data Gathering Selection Mask 2	Data Gathering I-Variables	171
+A/D Processing Table I-Variables	A/D Processing Table I-Variables	172
+I5060 A/D Processing Ring Size	A/D Processing Table I-Variables	172
+I5061-I5076 A/D Ring Slot Pointers	A/D Processing Table I-Variables	173
+I5080  A/D Ring Convert Enable	A/D Processing Table I-Variables	174
+I5081-I5096 A/D Ring Convert Codes	A/D Processing Table I-Variables	174
+Coordinate System I-Variables	Coordinate System I-Variables	175
+Isx11    Coordinate System ‘x’ User Countdown Timer 1	Coordinate System I-Variables	176
+Isx12    Coordinate System x User Countdown Timer 2	Coordinate System I-Variables	176
+Isx13    Coordinate System x Segmentation Time	Coordinate System I-Variables	177
+Isx14    Coordinate System ‘x’ End-of-Move Anticipation Time	Coordinate System I-Variables	178
+Isx15    Coordinate System ‘x’ Segmentation Override	Coordinate System I-Variables	178
+Isx16    Coordinate System ‘x’ Segmentation Override Slew	Coordinate System I-Variables	179
+Isx20    Coordinate System x Lookahead Length	Coordinate System I-Variables	180
+Isx21    Coordinate System x Lookahead State Control	Coordinate System I-Variables	181
+Isx50    Coordinate System x Kinematic Calculations Enable	Coordinate System I-Variables	181
+Isx53    Coordinate System x Step Mode Control	Coordinate System I-Variables	182
+Isx78    Coordinate System ‘x’ Maximum Circle Acceleration	Coordinate System I-Variables	182
+Isx79    Coordinate System ‘x’ Rapid Move Mode Control	Coordinate System I-Variables	183
+Isx81    Coordinate System ‘x’ Blend Disable In-Position Time-Out	Coordinate System I-Variables	184
+Isx82    Coordinate System ‘x’ Blend Disable Dwell Time	Coordinate System I-Variables	184
+Isx83    Coordinate System ‘x’ Corner Blend Break Point	Coordinate System I-Variables	185
+Isx84    Coordinate System ‘x’ Outside Corner Stop Point Control	Coordinate System I-Variables	186
+Isx85   Coordinate System ‘x’ Corner Dwell Break Point	Coordinate System I-Variables	186
+Isx86   Coordinate System x Alternate Feedrate	Coordinate System I-Variables	187
+Isx87   Coordinate System x Default Program Acceleration Time	Coordinate System I-Variables	188
+Isx88   Coordinate System x Default Program S-Curve Time	Coordinate System I-Variables	188
+Isx89   Coordinate System x Default Program Feedrate/Move Time	Coordinate System I-Variables	189
+Isx90   Coordinate System x Feedrate Time Units	Coordinate System I-Variables	189
+Isx91   Coordinate System x Default Working Program Number	Coordinate System I-Variables	189
+Isx92   Coordinate System ‘x’ Move Blend Disable	Coordinate System I-Variables	190
+Isx93   Coordinate System x Time Base Control Address	Coordinate System I-Variables	190
+Isx94   Coordinate System x Time Base Slew Rate	Coordinate System I-Variables	191
+Isx95   Coordinate System x Feed Hold Slew Rate	Coordinate System I-Variables	191
+Isx96   Coordinate System x Circle Error Limit	Coordinate System I-Variables	191
+Isx97   Coordinate System x Minimum Arc Length	Coordinate System I-Variables	192
+Isx98   Coordinate System x Maximum Feedrate	Coordinate System I-Variables	193
+Isx99   Coordinate System x Cutter-Comp Outside Corner Break Point	Coordinate System I-Variables	193
+Turbo PMAC2 MACRO IC I-Variables	Turbo PMAC2 MACRO IC I-Variables	194
+I6800/I6850/I6900/I6950      MACRO IC MaxPhase/PWM Frequency Control	Turbo PMAC2 MACRO IC I-Variables	194
+I6801/I6851/I6901/I6951      MACRO IC Phase Clock Frequency Control	Turbo PMAC2 MACRO IC I-Variables	196
+I6802/I6852/I6902/I6952      MACRO IC Servo Clock Frequency Control	Turbo PMAC2 MACRO IC I-Variables	196
+I6803/I6853/I6903/I6953      MACRO IC Hardware Clock Control	Turbo PMAC2 MACRO IC I-Variables	198
+I6804/I6854/I6904/I6954      MACRO IC PWM Deadtime / PFM Pulse Width Control	Turbo PMAC2 MACRO IC I-Variables	200
+I6805/I6855/I6905/I6955      MACRO IC DAC Strobe Word	Turbo PMAC2 MACRO IC I-Variables	200
+I6806/I6856/I6906/I6956      MACRO IC ADC Strobe Word	Turbo PMAC2 MACRO IC I-Variables	201
+I6807/I6857/I6907/I6957      MACRO IC Clock Direction Control	Turbo PMAC2 MACRO IC I-Variables	201
+Channel-Specific MACRO IC I-variables	Channel-Specific MACRO IC I-variables	202
+I68n0/I69n0    MACRO IC Channel n* Encoder/Timer Decode Control	Channel-Specific MACRO IC I-variables	203
+I68n1/I69n1    MACRO IC Channel n* Position Compare Channel Select	Channel-Specific MACRO IC I-variables	204
+I68n2/I69n2    MACRO IC Encoder n* Capture Control	Channel-Specific MACRO IC I-variables	204
+I68n3/I69n3    MACRO IC Channel n* Capture Flag Select Control	Channel-Specific MACRO IC I-variables	205
+I68n4/I69n4    MACRO IC Channel n* Encoder Gated Index Select	Channel-Specific MACRO IC I-variables	206
+I68n5/I69n5    MACRO IC Channel n* Encoder Index Gate State/Demux Control	Channel-Specific MACRO IC I-variables	207
+I68n6/I69n6    MACRO IC Channel n* Output Mode Select	Channel-Specific MACRO IC I-variables	208
+I68n7/I69n7    MACRO IC Channel n* Output Invert Control	Channel-Specific MACRO IC I-variables	208
+I68n8/I69n8    MACRO IC Channel n* PFM Direction Signal Invert Control	Channel-Specific MACRO IC I-variables	209
+I68n9/I69n9    Reserved for Future Use	Channel-Specific MACRO IC I-variables	209
+MACRO IC Ring Setup I-variables	MACRO IC Ring Setup I-variables	210
+I6840/I6890/I6940/I6990      MACRO IC Ring Configuration/Status	MACRO IC Ring Setup I-variables	210
+I6841/I6891/I6941/I6991      MACRO IC Node Activate Control	MACRO IC Ring Setup I-variables	211
+Servo IC I-Variables	Servo IC I-Variables	212
+PMAC2-Style Multi-Channel Servo IC I-Variables	PMAC2-Style Multi-Channel Servo IC I-Variables	213
+I7m00   Servo IC m MaxPhase/PWM Frequency Control	PMAC2-Style Multi-Channel Servo IC I-Variables	213
+I7m01   Servo IC m Phase Clock Frequency Control	PMAC2-Style Multi-Channel Servo IC I-Variables	215
+I7m02   Servo IC m Servo Clock Frequency Control	PMAC2-Style Multi-Channel Servo IC I-Variables	215
+I7m03   Servo IC m Hardware Clock Control	PMAC2-Style Multi-Channel Servo IC I-Variables	217
+I7m04   Servo IC m PWM Deadtime / PFM Pulse Width Control	PMAC2-Style Multi-Channel Servo IC I-Variables	218
+I7m05   Servo IC m DAC Strobe Word	PMAC2-Style Multi-Channel Servo IC I-Variables	219
+I7m06   Servo IC m ADC Strobe Word	PMAC2-Style Multi-Channel Servo IC I-Variables	219
+I7m07   Servo IC m Phase/Servo Clock Direction	PMAC2-Style Multi-Channel Servo IC I-Variables	220
+PMAC2-Style Channel-Specific Servo IC I-Variables	PMAC2-Style Channel-Specific Servo IC I-Variables	221
+I7mn0   Servo IC m Channel n Encoder/Timer Decode Control	PMAC2-Style Channel-Specific Servo IC I-Variables	221
+I7mn1     Servo IC m Channel n Position Compare Channel Select	PMAC2-Style Channel-Specific Servo IC I-Variables	222
+I7mn2     Servo IC m Channel n Capture Control	PMAC2-Style Channel-Specific Servo IC I-Variables	222
+I7mn3     Servo IC m Channel n Capture Flag Select Control	PMAC2-Style Channel-Specific Servo IC I-Variables	223
+I7mn4     Servo IC m Channel n Encoder Gated Index Select	PMAC2-Style Channel-Specific Servo IC I-Variables	223
+I7mn5     Servo IC m Channel n Encoder Index Gate State/Demux Control	PMAC2-Style Channel-Specific Servo IC I-Variables	224
+I7mn6     Servo IC m Channel n Output Mode Select	PMAC2-Style Channel-Specific Servo IC I-Variables	225
+I7mn7     Servo IC m Channel n Output Invert Control	PMAC2-Style Channel-Specific Servo IC I-Variables	225
+I7mn8     Servo IC m Channel n PFM Direction Signal Invert Control	PMAC2-Style Channel-Specific Servo IC I-Variables	226
+I7mn9     Servo IC m Channel n Hardware-1/T Control	PMAC2-Style Channel-Specific Servo IC I-Variables	226
+PMAC-Style Servo IC Setup I-Variables	PMAC-Style Servo IC Setup I-Variables	227
+I7mn0     Servo IC m Channel n Encoder/Timer Decode Control	PMAC-Style Servo IC Setup I-Variables	227
+I7mn1     Servo IC m Channel n Encoder Filter Disable	PMAC-Style Servo IC Setup I-Variables	228
+I7mn2     Servo IC m Channel n Capture Control	PMAC-Style Servo IC Setup I-Variables	228
+I7mn3     Servo IC m Channel n Capture Flag Select Control	PMAC-Style Servo IC Setup I-Variables	229
+Conversion Table I-Variables	Conversion Table I-Variables	230
+I8000-I8191      Conversion Table Setup Lines	Conversion Table I-Variables	230
+TURBO PMAC ON-LINE COMMAND SPECIFICATION	TURBO PMAC ON-LINE COMMAND SPECIFICATION	254
+<CONTROL-A>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	254
+<CONTROL-B>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	254
+<CONTROL-C>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	255
+<CONTROL-D>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	256
+<CONTROL-E>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	256
+<CONTROL-F>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	257
+<CONTROL-G>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	257
+<CONTROL-H>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	258
+<CONTROL-I>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	258
+<CONTROL-K>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	258
+<CONTROL-M>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	259
+<CONTROL-N>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	259
+<CONTROL-O>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	260
+<CONTROL-P>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	260
+<CONTROL-Q>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	261
+<CONTROL-R>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	261
+<CONTROL-S>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	261
+<CONTROL-T>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	262
+<CONTROL-V>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	262
+<CONTROL-X>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	263
+!{axis}{constant}[{axis}{constant}…]	TURBO PMAC ON-LINE COMMAND SPECIFICATION	264
+@	TURBO PMAC ON-LINE COMMAND SPECIFICATION	264
+@{card}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	265
+#	TURBO PMAC ON-LINE COMMAND SPECIFICATION	266
+#{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	266
+#{constant}->	TURBO PMAC ON-LINE COMMAND SPECIFICATION	267
+#{constant}->0	TURBO PMAC ON-LINE COMMAND SPECIFICATION	267
+#{constant}->{axis definition}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	268
+#{constant}->I	TURBO PMAC ON-LINE COMMAND SPECIFICATION	269
+##	TURBO PMAC ON-LINE COMMAND SPECIFICATION	270
+##{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	270
+$	TURBO PMAC ON-LINE COMMAND SPECIFICATION	271
+$$	TURBO PMAC ON-LINE COMMAND SPECIFICATION	272
+$$$	TURBO PMAC ON-LINE COMMAND SPECIFICATION	273
+$$$***	TURBO PMAC ON-LINE COMMAND SPECIFICATION	273
+$$*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	274
+$*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	274
+%	TURBO PMAC ON-LINE COMMAND SPECIFICATION	275
+%{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	276
+&	TURBO PMAC ON-LINE COMMAND SPECIFICATION	276
+&{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	277
+\	TURBO PMAC ON-LINE COMMAND SPECIFICATION	278
+<	TURBO PMAC ON-LINE COMMAND SPECIFICATION	278
+>	TURBO PMAC ON-LINE COMMAND SPECIFICATION	279
+/	TURBO PMAC ON-LINE COMMAND SPECIFICATION	279
+?	TURBO PMAC ON-LINE COMMAND SPECIFICATION	280
+??	TURBO PMAC ON-LINE COMMAND SPECIFICATION	284
+???	TURBO PMAC ON-LINE COMMAND SPECIFICATION	289
+A	TURBO PMAC ON-LINE COMMAND SPECIFICATION	291
+ABR[{constant}]	TURBO PMAC ON-LINE COMMAND SPECIFICATION	292
+ABS	TURBO PMAC ON-LINE COMMAND SPECIFICATION	293
+{axis}={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	294
+B{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	295
+CHECKSUM	TURBO PMAC ON-LINE COMMAND SPECIFICATION	295
+CID	TURBO PMAC ON-LINE COMMAND SPECIFICATION	296
+CLEAR	TURBO PMAC ON-LINE COMMAND SPECIFICATION	296
+CLEAR ALL	TURBO PMAC ON-LINE COMMAND SPECIFICATION	297
+CLEAR ALL PLCS	TURBO PMAC ON-LINE COMMAND SPECIFICATION	297
+CLOSE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	297
+CLOSE ALL	TURBO PMAC ON-LINE COMMAND SPECIFICATION	298
+CLRF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	299
+{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	299
+CPU	TURBO PMAC ON-LINE COMMAND SPECIFICATION	300
+DATE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	300
+DEFINE BLCOMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	300
+DEFINE CCBUF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	301
+DEFINE COMP (one-dimensional)	TURBO PMAC ON-LINE COMMAND SPECIFICATION	302
+DEFINE COMP (two-dimensional)	TURBO PMAC ON-LINE COMMAND SPECIFICATION	303
+DEFINE GATHER	TURBO PMAC ON-LINE COMMAND SPECIFICATION	307
+DEFINE LOOKAHEAD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	307
+DEFINE ROTARY	TURBO PMAC ON-LINE COMMAND SPECIFICATION	309
+DEFINE TBUF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	310
+DEFINE TCOMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	310
+DEFINE UBUFFER [modified description]	TURBO PMAC ON-LINE COMMAND SPECIFICATION	311
+DELETE ALL	TURBO PMAC ON-LINE COMMAND SPECIFICATION	312
+DELETE ALL TEMPS	TURBO PMAC ON-LINE COMMAND SPECIFICATION	313
+DELETE BLCOMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	313
+DELETE CCUBUF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	314
+DELETE COMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	314
+DELETE LOOKAHEAD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	314
+DELETE GATHER	TURBO PMAC ON-LINE COMMAND SPECIFICATION	315
+DELETE PLCC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	316
+DELETE ROTARY	TURBO PMAC ON-LINE COMMAND SPECIFICATION	316
+DELETE TBUF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	317
+DELETE TCOMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	317
+DISABLE PLC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	318
+DISABLE PLCC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	318
+E	TURBO PMAC ON-LINE COMMAND SPECIFICATION	319
+EAVERSION	TURBO PMAC ON-LINE COMMAND SPECIFICATION	319
+ENABLE PLC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	320
+ENABLE PLCC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	321
+ENDGATHER	TURBO PMAC ON-LINE COMMAND SPECIFICATION	321
+F	TURBO PMAC ON-LINE COMMAND SPECIFICATION	322
+FRAX	TURBO PMAC ON-LINE COMMAND SPECIFICATION	322
+FREAD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	323
+FSAVE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	323
+FSAVECLEAR	TURBO PMAC ON-LINE COMMAND SPECIFICATION	324
+GATHER	TURBO PMAC ON-LINE COMMAND SPECIFICATION	324
+H	TURBO PMAC ON-LINE COMMAND SPECIFICATION	325
+HOME	TURBO PMAC ON-LINE COMMAND SPECIFICATION	326
+HOMEZ	TURBO PMAC ON-LINE COMMAND SPECIFICATION	326
+I{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	327
+I{data}={expression}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	328
+I{constant}=*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	329
+I{constant}=@I{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	330
+IDC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	330
+IDNUMBER	TURBO PMAC ON-LINE COMMAND SPECIFICATION	331
+INC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	331
+J!	TURBO PMAC ON-LINE COMMAND SPECIFICATION	332
+J+	TURBO PMAC ON-LINE COMMAND SPECIFICATION	332
+J-	TURBO PMAC ON-LINE COMMAND SPECIFICATION	333
+J/	TURBO PMAC ON-LINE COMMAND SPECIFICATION	333
+J:{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	334
+J:*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	334
+J=	TURBO PMAC ON-LINE COMMAND SPECIFICATION	335
+J={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	335
+J=*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	336
+J=={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	336
+J^{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	337
+J^*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	337
+{jog command}^{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	338
+K	TURBO PMAC ON-LINE COMMAND SPECIFICATION	339
+LEARN	TURBO PMAC ON-LINE COMMAND SPECIFICATION	340
+LIST	TURBO PMAC ON-LINE COMMAND SPECIFICATION	341
+LIST BLCOMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	341
+LIST BLCOMP DEF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	342
+LIST COMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	342
+LIST COMP DEF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	343
+LIST FORWARD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	343
+LIST GATHER	TURBO PMAC ON-LINE COMMAND SPECIFICATION	344
+LIST INVERSE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	344
+LIST LDS	TURBO PMAC ON-LINE COMMAND SPECIFICATION	345
+LIST LINK	TURBO PMAC ON-LINE COMMAND SPECIFICATION	345
+LIST PC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	345
+LIST PE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	346
+LIST PLC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	347
+LIST PROGRAM	TURBO PMAC ON-LINE COMMAND SPECIFICATION	348
+LIST ROTARY	TURBO PMAC ON-LINE COMMAND SPECIFICATION	349
+LIST TCOMP	TURBO PMAC ON-LINE COMMAND SPECIFICATION	349
+LIST TCOMP DEF	TURBO PMAC ON-LINE COMMAND SPECIFICATION	350
+LOCK{constant},P{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	350
+M{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	351
+M{data}={expression}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	352
+M{constant}->	TURBO PMAC ON-LINE COMMAND SPECIFICATION	352
+M{constant}->*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	353
+M{constant}->D:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	354
+M{constant}->DP:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	354
+M{constant}->F:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	355
+M{constant}->L:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	355
+M{constant}->TWB:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	356
+M{constant}->TWD:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	357
+M{constant}->TWR:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	358
+M{constant}->TWS:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	358
+M{constant}->X/Y:{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	360
+MACROASCII{master #}            [replaced]	TURBO PMAC ON-LINE COMMAND SPECIFICATION	361
+MACROAUX{node #},M{slave var}={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	361
+MACROAUX{node #},{param #}={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	362
+MACROAUXREAD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	363
+MACROAUXWRITE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	363
+MACROMST{master#},{master variable}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	364
+MACROMST{master#},{master variable}={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	365
+MACROMSTASCII{master #}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	366
+MACROMSTREAD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	367
+MACROMSTWRITE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	368
+MACROSLV{command} {node#}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	369
+MACROSLV{node#},{slave variable}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	370
+MACROSLV{node#},{slave variable}={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	371
+MACROSLVREAD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	372
+MACROSLVWRITE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	373
+MACROSTASCII {station #}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	374
+MACROSTASCIIFREQ	TURBO PMAC ON-LINE COMMAND SPECIFICATION	375
+MACROSTASCIIFREQ={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	375
+MACROSTASCIIFREQ=*	TURBO PMAC ON-LINE COMMAND SPECIFICATION	375
+MFLUSH	TURBO PMAC ON-LINE COMMAND SPECIFICATION	376
+MOVETIME	TURBO PMAC ON-LINE COMMAND SPECIFICATION	376
+NOFRAX	TURBO PMAC ON-LINE COMMAND SPECIFICATION	376
+NORMAL	TURBO PMAC ON-LINE COMMAND SPECIFICATION	377
+O{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	377
+OPEN BINARY ROTARY	TURBO PMAC ON-LINE COMMAND SPECIFICATION	378
+OPEN FORWARD	TURBO PMAC ON-LINE COMMAND SPECIFICATION	378
+OPEN INVERSE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	379
+OPEN PLC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	380
+OPEN PROGRAM	TURBO PMAC ON-LINE COMMAND SPECIFICATION	381
+OPEN ROTARY	TURBO PMAC ON-LINE COMMAND SPECIFICATION	381
+P	TURBO PMAC ON-LINE COMMAND SPECIFICATION	382
+P{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	382
+P{data}={expression}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	383
+PASSWORD={string}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	384
+PAUSE PLC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	385
+PC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	386
+PE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	387
+PMATCH	TURBO PMAC ON-LINE COMMAND SPECIFICATION	387
+PR	TURBO PMAC ON-LINE COMMAND SPECIFICATION	388
+Q	TURBO PMAC ON-LINE COMMAND SPECIFICATION	388
+Q{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	389
+Q{data}={expression}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	389
+R	TURBO PMAC ON-LINE COMMAND SPECIFICATION	391
+R[H]{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	391
+RESUME PLC	TURBO PMAC ON-LINE COMMAND SPECIFICATION	392
+S	TURBO PMAC ON-LINE COMMAND SPECIFICATION	393
+SAVE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	394
+SETPHASE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	395
+SID	TURBO PMAC ON-LINE COMMAND SPECIFICATION	395
+SIZE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	396
+STN	TURBO PMAC ON-LINE COMMAND SPECIFICATION	396
+STN={constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	397
+TIME	TURBO PMAC ON-LINE COMMAND SPECIFICATION	397
+TIME={time}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	397
+TODAY	TURBO PMAC ON-LINE COMMAND SPECIFICATION	398
+TODAY={date}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	399
+TYPE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	399
+UNDEFINE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	400
+UNDEFINE ALL	TURBO PMAC ON-LINE COMMAND SPECIFICATION	400
+UNLOCK{constant}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	401
+UPDATE	TURBO PMAC ON-LINE COMMAND SPECIFICATION	401
+V	TURBO PMAC ON-LINE COMMAND SPECIFICATION	401
+VERSION	TURBO PMAC ON-LINE COMMAND SPECIFICATION	402
+VID	TURBO PMAC ON-LINE COMMAND SPECIFICATION	402
+W{address}	TURBO PMAC ON-LINE COMMAND SPECIFICATION	403
+Z	TURBO PMAC ON-LINE COMMAND SPECIFICATION	403
+TURBO PMAC PROGRAM COMMAND SPECIFICATION	TURBO PMAC PROGRAM COMMAND SPECIFICATION	405
+{axis}{data}[{axis}{data}…]	TURBO PMAC PROGRAM COMMAND SPECIFICATION	405
+{axis}{data}:{data} [{axis}{data}:{data}…]	TURBO PMAC PROGRAM COMMAND SPECIFICATION	405
+{axis}{data}^{data}[{axis}{data}^{data}...]	TURBO PMAC PROGRAM COMMAND SPECIFICATION	406
+{axis}{data}[{axis}{data}…] {vector}{data} [{vector}{data}…]	TURBO PMAC PROGRAM COMMAND SPECIFICATION	407
+A{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	409
+ABS	TURBO PMAC PROGRAM COMMAND SPECIFICATION	409
+ADDRESS	TURBO PMAC PROGRAM COMMAND SPECIFICATION	410
+ADDRESS#P{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	410
+ADDRESS&P{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	411
+ADIS{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	412
+AND ({condition})	TURBO PMAC PROGRAM COMMAND SPECIFICATION	412
+AROT{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	413
+B{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	414
+BLOCKSTART	TURBO PMAC PROGRAM COMMAND SPECIFICATION	414
+BLOCKSTOP	TURBO PMAC PROGRAM COMMAND SPECIFICATION	415
+C{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	415
+CALL	TURBO PMAC PROGRAM COMMAND SPECIFICATION	415
+CC0	TURBO PMAC PROGRAM COMMAND SPECIFICATION	417
+CC1	TURBO PMAC PROGRAM COMMAND SPECIFICATION	417
+CC2	TURBO PMAC PROGRAM COMMAND SPECIFICATION	418
+CC3	TURBO PMAC PROGRAM COMMAND SPECIFICATION	418
+CC4	TURBO PMAC PROGRAM COMMAND SPECIFICATION	419
+CCR{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	419
+CIRCLE1	TURBO PMAC PROGRAM COMMAND SPECIFICATION	420
+CIRCLE2	TURBO PMAC PROGRAM COMMAND SPECIFICATION	420
+COMMANDx"{command}"	TURBO PMAC PROGRAM COMMAND SPECIFICATION	421
+COMMANDx^{letter}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	423
+CREAD	TURBO PMAC PROGRAM COMMAND SPECIFICATION	424
+D{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	425
+DELAY{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	426
+DISABLE PLC {constant}[,{constant}...]	TURBO PMAC PROGRAM COMMAND SPECIFICATION	426
+DISABLE PLCC {constant}[,{constant}...]	TURBO PMAC PROGRAM COMMAND SPECIFICATION	427
+DISPLAY [{constant}] "{message}"	TURBO PMAC PROGRAM COMMAND SPECIFICATION	428
+DISPLAY ... {variable}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	428
+DWELL	TURBO PMAC PROGRAM COMMAND SPECIFICATION	429
+ELSE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	429
+ENABLE PLC	TURBO PMAC PROGRAM COMMAND SPECIFICATION	431
+ENABLE PLCC	TURBO PMAC PROGRAM COMMAND SPECIFICATION	431
+ENDIF	TURBO PMAC PROGRAM COMMAND SPECIFICATION	432
+ENDWHILE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	432
+F{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	433
+FRAX	TURBO PMAC PROGRAM COMMAND SPECIFICATION	434
+G{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	435
+GOSUB	TURBO PMAC PROGRAM COMMAND SPECIFICATION	436
+GOTO	TURBO PMAC PROGRAM COMMAND SPECIFICATION	436
+HOME	TURBO PMAC PROGRAM COMMAND SPECIFICATION	437
+HOMEZ	TURBO PMAC PROGRAM COMMAND SPECIFICATION	438
+I{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	439
+I{data}={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	439
+IDIS{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	440
+IF ({condition})	TURBO PMAC PROGRAM COMMAND SPECIFICATION	440
+INC	TURBO PMAC PROGRAM COMMAND SPECIFICATION	441
+IROT{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	442
+J{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	443
+K{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	443
+LINEAR	TURBO PMAC PROGRAM COMMAND SPECIFICATION	444
+LOCK{constant},P{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	444
+M{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	445
+M{data}={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	445
+M{data}=={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	446
+M{data}&={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	447
+M{data}|={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	447
+M{data}^={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	448
+MACROAUXREAD	TURBO PMAC PROGRAM COMMAND SPECIFICATION	449
+MACROAUXWRITE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	450
+MACROMSTREAD	TURBO PMAC PROGRAM COMMAND SPECIFICATION	450
+MACROMSTWRITE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	451
+MACROSLVREAD	TURBO PMAC PROGRAM COMMAND SPECIFICATION	452
+MACROSLVWRITE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	454
+N{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	455
+NOFRAX	TURBO PMAC PROGRAM COMMAND SPECIFICATION	455
+NORMAL	TURBO PMAC PROGRAM COMMAND SPECIFICATION	455
+NX{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	456
+NY{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	457
+NZ{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	457
+O{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	458
+OR({condition})	TURBO PMAC PROGRAM COMMAND SPECIFICATION	459
+P{data}={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	459
+PAUSE PLC	TURBO PMAC PROGRAM COMMAND SPECIFICATION	460
+PRELUDE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	461
+PSET	TURBO PMAC PROGRAM COMMAND SPECIFICATION	462
+PVT{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	463
+Q{data}={expression}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	463
+R{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	464
+RAPID	TURBO PMAC PROGRAM COMMAND SPECIFICATION	465
+READ	TURBO PMAC PROGRAM COMMAND SPECIFICATION	466
+RESUME PLC	TURBO PMAC PROGRAM COMMAND SPECIFICATION	467
+RETURN	TURBO PMAC PROGRAM COMMAND SPECIFICATION	468
+S{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	468
+SENDx	TURBO PMAC PROGRAM COMMAND SPECIFICATION	469
+SENDx^{letter}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	470
+SETPHASE	TURBO PMAC PROGRAM COMMAND SPECIFICATION	471
+SPLINE1	TURBO PMAC PROGRAM COMMAND SPECIFICATION	472
+SPLINE2	TURBO PMAC PROGRAM COMMAND SPECIFICATION	473
+STOP	TURBO PMAC PROGRAM COMMAND SPECIFICATION	473
+T{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	473
+TA{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	474
+TINIT	TURBO PMAC PROGRAM COMMAND SPECIFICATION	475
+TM{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	475
+TR{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	476
+TS{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	477
+TSELECT{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	478
+TX{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	478
+TY{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	479
+TZ{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	479
+U{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	480
+UNLOCK{constant}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	480
+V{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	481
+W{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	481
+WAIT	TURBO PMAC PROGRAM COMMAND SPECIFICATION	482
+WHILE({condition})	TURBO PMAC PROGRAM COMMAND SPECIFICATION	482
+X{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	484
+Y{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	484
+Z{data}	TURBO PMAC PROGRAM COMMAND SPECIFICATION	485
+TURBO PMAC MATHEMATICAL FEATURES	TURBO PMAC MATHEMATICAL FEATURES	486
+Mathematical Operators	Mathematical Operators	486
++	Mathematical Operators	486
+-	Mathematical Operators	486
+*	Mathematical Operators	486
+/	Mathematical Operators	486
+%	Mathematical Operators	487
+&	Mathematical Operators	488
+|	Mathematical Operators	488
+^	Mathematical Operators	489
+Mathematical Functions	Mathematical Functions	489
+ABS	Mathematical Functions	489
+ACOS	Mathematical Functions	489
+ASIN	Mathematical Functions	490
+ATAN	Mathematical Functions	490
+ATAN2	Mathematical Functions	491
+COS	Mathematical Functions	492
+EXP	Mathematical Functions	492
+INT	Mathematical Functions	492
+LN	Mathematical Functions	493
+SIN	Mathematical Functions	493
+SQRT	Mathematical Functions	494
+TAN	Mathematical Functions	494
+TURBO PMAC MEMORY AND I/O MAP	TURBO PMAC MEMORY AND I/O MAP	495
+Program (Machine Code) Memory	Program (Machine Code) Memory	495
+Global Servo Registers	Global Servo Registers	495
+Temporary Stack Registers	Temporary Stack Registers	497
+Motor Registers	Motor Registers	497
+Global Registers	Global Registers	503
+Communication Buffers	Communication Buffers	504
+Coordinate System Registers	Coordinate System Registers	504
+Program and Buffer Pointers	Program and Buffer Pointers	508
+Processed A/D Registers	Processed A/D Registers	509
+Additional Coordinate System Registers	Additional Coordinate System Registers	509
+MACRO Ring Status Registers	MACRO Ring Status Registers	510
+MACRO Flag Registers	MACRO Flag Registers	511
+Encoder Conversion Table Registers	Encoder Conversion Table Registers	511
+Buffer Pointers	Buffer Pointers	512
+Commutation Sine Table	Commutation Sine Table	512
+User Variable Registers	User Variable Registers	512
+User Program and Buffer Storage	User Program and Buffer Storage	512
+Battery-Backed RAM Registers (Option 16x required)	Battery-Backed RAM Registers (Option 16x required)	512
+Dual Ported RAM Registers (Option 2x required)	Dual Ported RAM Registers (Option 2x required)	512
+DPRAM Control Panel	Dual Ported RAM Registers (Option 2x required)	513
+DPRAM Control Panel Registers	Dual Ported RAM Registers (Option 2x required)	514
+Motor Data Reporting Buffer Control (used if I48=1 or I57=1)	Dual Ported RAM Registers (Option 2x required)	515
+Motor Data Reporting Buffer (Used if I48 = 1 or I57 = 1)	Dual Ported RAM Registers (Option 2x required)	515
+Background Data Reporting Buffer Control (used if I49 = 1 or I57 = 1)	Dual Ported RAM Registers (Option 2x required)	519
+Global Background Data Reporting Buffer (used if I49 = 1)	Dual Ported RAM Registers (Option 2x required)	520
+Coordinate System Background Data Reporting Buffer	Dual Ported RAM Registers (Option 2x required)	520
+(used if I49 = 1)	Dual Ported RAM Registers (Option 2x required)	520
+DPRAM ASCII Buffers (used if I58 = 1)	Dual Ported RAM Registers (Option 2x required)	525
+Background Variable Read and Write Buffer Control (used if I55 = 1)	Dual Ported RAM Registers (Option 2x required)	525
+Binary Rotary Program Buffer Control (used after OPEN BIN ROT)	Dual Ported RAM Registers (Option 2x required)	526
+Data Gathering Control (used if I5000 = 2 or 3)	Dual Ported RAM Registers (Option 2x required)	526
+Variable-Sized Buffers/Open-Use Space	Dual Ported RAM Registers (Option 2x required)	526
+VME Bus/DPRAM Interface Registers	VME Bus/DPRAM Interface Registers	526
+Turbo PMAC2 I/O Control Registers	Turbo PMAC2 I/O Control Registers	527
+PMAC-Style Servo ASIC Registers	PMAC-Style Servo ASIC Registers	529
+PMAC2-Style Servo ASIC Registers	PMAC2-Style Servo ASIC Registers	533
+Turbo PMAC2 MACRO and I/O ASIC Registers	Turbo PMAC2 MACRO and I/O ASIC Registers	543
+I/O Control and Data Registers (MACRO IC 0 only)	Turbo PMAC2 MACRO and I/O ASIC Registers	543
+MACRO Ring Control Registers	Turbo PMAC2 MACRO and I/O ASIC Registers	546
+Supplemental Servo Channel Registers (MACRO IC 0 only)	Turbo PMAC2 MACRO and I/O ASIC Registers	547
+Turbo PMAC2 MACRO Node Registers	Turbo PMAC2 MACRO and I/O ASIC Registers	550
+Turbo PMAC I/O Registers	Turbo PMAC I/O Registers	552
+Turbo PMAC2 Option 12 A/D Register	Turbo PMAC2 Option 12 A/D Register	554
+3U Turbo PMAC2 Stack I/O Registers	3U Turbo PMAC2 Stack I/O Registers	554
+JEXP Expansion Port I/O Registers	JEXP Expansion Port I/O Registers	556
+UMAC UBUS Expansion Port I/O Registers	UMAC UBUS Expansion Port I/O Registers	556
+TURBO PMAC SUGGESTED M-VARIABLE DEFINITIONS	TURBO PMAC SUGGESTED M-VARIABLE DEFINITIONS	558
+TURBO PMAC2 SUGGESTED M-VARIABLE DEFINITIONS	TURBO PMAC2 SUGGESTED M-VARIABLE DEFINITIONS	610
+UMAC TURBO SUGGESTED M-VARIABLE DEFINITIONS	UMAC TURBO SUGGESTED M-VARIABLE DEFINITIONS	676
+CHANGE SUMMARY: PMAC TO TURBO PMAC	CHANGE SUMMARY: PMAC TO TURBO PMAC	742
+Overview Feature Comparison	Overview Feature Comparison	742
+I-Variable Changes	I-Variable Changes	743
+I-Variable Changes (continued)	I-Variable Changes (continued)	744
+DPRAM Function Changes	DPRAM Function Changes	744
+Compensation Table Changes	Compensation Table Changes	744
+Commutation Changes	Commutation Changes	745
+Overtravel Limit Changes	Overtravel Limit Changes	745
+Cutter Radius Compensation Changes	Cutter Radius Compensation Changes	745
+Communications Changes	Communications Changes	745
+Memory and I/O Map Changes	Memory and I/O Map Changes	746
+Jumper Changes	Jumper Changes	747
+On-line Command Changes	On-line Command Changes	747
+Program Command Changes	Program Command Changes	748
+Encoder Conversion Table Changes	Encoder Conversion Table Changes	748
+FIRMWARE UPDATE LISTING	FIRMWARE UPDATE LISTING	749
+V1.933 Updates (July 1999)	V1.933 Updates (July 1999)	749
+V1.934 Updates (September 1999)	V1.934 Updates (September 1999)	749
+V1.935 Updates (February 2000)	V1.935 Updates (February 2000)	751
+V1.936 Updates (April 2000)	V1.936 Updates (April 2000)	751
+V1.937 Updates (November, 2000)	V1.937 Updates (November, 2000)	752
+V1.938 Updates (June, 2001)	V1.938 Updates (June, 2001)	754
+V1.939 Updates (March, 2002)	V1.939 Updates (March, 2002)	754
+V1.940 Updates (June, 2003)	V1.940 Updates (June, 2003)	755
+V1.941 Updates (September 2005)	V1.941 Updates (September 2005)	756
+V1.942 Updates (October 2005)	V1.942 Updates (October 2005)	757
+V1.943 Updates (January 2007)	V1.943 Updates (January 2007)	758
+V1.944 Updates (January 2008)	V1.944 Updates (January 2008)	758
+V1.945 Updates (June 2008)	V1.945 Updates (June 2008)	758
+V1.946 Updates (Dec 2008, Geo Brick only)	V1.946 Updates (Dec 2008, Geo Brick only)	759
+V1.947 Updates (May 2010)	V1.947 Updates (May 2010)	759
+V1.948 Updates (November 2013)	V1.948 Updates (November 2013)	760
