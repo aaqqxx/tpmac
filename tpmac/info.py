@@ -63,11 +63,11 @@ def eval_ivar(f, ivar, category, desc):
             eval_ivar(f, int_to_ivar(i), category, desc)
     else: 
         try:
-            ivar_to_int(ivar)
+            ivar_int = ivar_to_int(ivar)
         except:
             print('Failed: %s' % ivar)
         else:
-            print('%s\t%s\t%s' % (ivar, desc, category), file=f)
+            print('i%d\t%s\t%s' % (ivar_int, desc, category), file=f)
         
             if ivar in ivars:
                 print('Duplicate', ivar, ivars[ivar], '//', (category, desc))

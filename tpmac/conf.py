@@ -113,6 +113,10 @@ class TpVar(object):
 
         self.var, self.value = var, value.strip()
         self.comment = comment
+    
+    @property
+    def var_str(self):
+        return '%s%s' % (self.type_.lower(), self.var)
 
     def config_str(self, config=None):
         if self.type_ == 'm':
@@ -131,19 +135,26 @@ class TpVar(object):
         if self.type_ == 'm':
             value = util.clean_addr(value)
          
-        try:
-            desc = info.mem_info[value.lower()][0]
-        except KeyError:
-            pass
-        else:
-            if self.comment:
-                if desc in self.comment:
-                    pass
-                elif desc != self.comment:
-                    self.comment = '%s [%s]' % (self.comment, desc)
-            else:
-                self.comment = desc
+            try:
+                desc = info.mem_info[value.lower()][0]
+            except KeyError:
+                return
 
+        elif self.type_ == 'i':
+            try:
+                desc = info.ivar_info[self.var_str][0]
+            except KeyError:
+                return
+
+        if self.comment:
+            if desc in self.comment:
+                pass
+            elif desc != self.comment:
+                self.comment = '%s [%s]' % (self.comment, desc)
+        else:
+            self.comment = desc
+
+            
 class TpVars(object):
     def __init__(self, type_):
         self.type_ = type_
