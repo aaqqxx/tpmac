@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # vi: ts=4 sw=4
 """
-Usage: viewer.py [-c] [--profile=geobrick_lv] PMC_FILE
+Usage: viewer.py [-c] [--pdf=FILE] [--profile=geobrick_lv] PMC_FILE
+       viewer.py --download [--pdf=FILE]
 
 Arguments:
     PMC_FILE         the PMC file to display
@@ -9,12 +10,18 @@ Arguments:
 Options:
     -c --clean       clean pmc file first
     -p --profile=x   variable information profile [default: geobrick_lv]
+    -d --download    download "turbo srm.pdf" from Delta Tau website (http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf)
+    -p --pdf=FILE    specify pdf documentation location (current index is of 2014/2/14 manual) [default: turbo_srm.pdf]
 """
 
 from __future__ import print_function
 import os
 import sys
-from cStringIO import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import tempfile
 import webbrowser
 
@@ -52,11 +59,17 @@ import tpmac.info as tp_info
 from tpmac.clean import clean_pmc
 
 
-def open_documentation_pdf(pdf='turbo_srm.pdf', page=0):
+PDF_FILE = 'turbo_srm.pdf'
+PDF_URL = 'http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf'
+
+
+def open_documentation_pdf(page=0):
+    global PDF_FILE
+    pdf = PDF_FILE
     print('Opening pdf %s, page %d...' % (pdf, page))
 
     fn = None
-    pdf = os.path.abspath(pdf)
+    pdf = os.path.abspath(PDF_FILE)
     pdf = pdf.replace('\\', '/')
     url = 'file:///%s#page=%d' % (pdf, page)
 
@@ -74,9 +87,10 @@ def show_tooltip(text):
 
 
 class LookupWidget(QtGui.QFrame):
-    def __init__(self, entries, parent=None):
+    def __init__(self, title, entries, parent=None):
         QtGui.QFrame.__init__(self, parent)
 
+        self.setWindowTitle(title)
         self.list_ = QtGui.QListWidget()
         self.list_.itemDoubleClicked.connect(self.open_)
 
@@ -93,9 +107,10 @@ class LookupWidget(QtGui.QFrame):
         self.cancel_button.setShortcut(QtGui.QKeySequence('Esc'))
         self.cancel_button.released.connect(self.close)
 
-        self.layout = QtGui.QFormLayout()
-        self.layout.addWidget(self.list_)
-        self.layout.addRow(self.open_button, self.cancel_button)
+        self.layout = QtGui.QGridLayout()
+        self.layout.addWidget(self.list_, 0, 0, 1, 2)
+        self.layout.addWidget(self.open_button, 1, 0)
+        self.layout.addWidget(self.cancel_button, 1, 1)
         self.setLayout(self.layout)
 
     def open_(self, item=None):
@@ -179,7 +194,10 @@ class TextEditor(Qsci.QsciScintilla):
         self.SCN_DWELLSTART.connect(self.dwell_start)
 
     def dwell_start(self, letter_pos, x, y):
-        word = self.wordAtPoint(QtCore.QPoint(x, y))
+        word = self.selectedText()
+        if not word:
+            word = self.wordAtPoint(QtCore.QPoint(x, y))
+
         self.lookup(str(word), tooltip_only=True)
 
     def focusInEvent(self, event):
@@ -208,6 +226,8 @@ class TextEditor(Qsci.QsciScintilla):
         if text is None:
             text = str(self.selectedText())
 
+        text = text.strip()
+
         entries = tp_info.lookup(text)
 
         if not entries:
@@ -215,21 +235,23 @@ class TextEditor(Qsci.QsciScintilla):
 
         if tooltip_only:
             if len(entries) == 1:
-                text, page = entries[0]
-                text = '%s (page=%d)' % (text, page)
-                print('Documentation: %s' % text)
-                show_tooltip(text)
+                tooltip, page = entries[0]
+                if page is not None:
+                    tooltip = '%s (page=%d)' % (tooltip, page)
+
+                print('%s: %s' % (text, tooltip))
+                show_tooltip(tooltip)
             return
 
         if len(entries) == 1:
-            text, page = entries[0]
-            print('Documentation: %s' % text)
+            tooltip, page = entries[0]
+            print('%s: %s' % (text, tooltip))
             if page is not None:
                 open_documentation_pdf(page=page)
             else:
-                show_tooltip(text)
+                show_tooltip(tooltip)
         else:
-            self._lookup_widget = LookupWidget(entries)
+            self._lookup_widget = LookupWidget(text, entries)
             self._lookup_widget.show()
 
     def on_margin_clicked(self, nmargin, nline, modifiers):
@@ -374,6 +396,8 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         MainWindow.instance = self
 
+        self.setWindowTitle('TpView - [%s]' % fn)
+
         self.main_splitter = QtGui.QSplitter()
 
         if clean:
@@ -401,8 +425,35 @@ class MainWindow(QtGui.QMainWindow):
         self.setCentralWidget(self.main_splitter)
 
 
+def download(url, filename):
+    print('Download: %s' % url)
+    print('Save to : %s' % filename)
+
+    if os.path.exists(filename):
+        print('File exists; aborting')
+        return
+
+    try:
+        import urllib2
+    except ImportError:
+        from urllib.request import urlretrieve
+        local_fn, headers = urlretrieve(url, filename=filename)
+    else:
+        with open(filename, 'wb') as f:
+            response = urllib2.urlopen(url)
+            data = response.read()
+            f.write(data)
+
+    print('Done')
+
+
 if __name__ == "__main__":
     opts = docopt(__doc__)
+
+    PDF_FILE = opts['--pdf']
+    if opts['--download']:
+        download(PDF_URL, PDF_FILE)
+        sys.exit(0)
 
     tp_info.load_settings(opts['--profile'])
     pmc_file = opts['PMC_FILE']
