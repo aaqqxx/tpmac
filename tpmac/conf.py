@@ -10,13 +10,14 @@ from .util import VAR_TYPES
 MIN_COMMENT_COL = 10
 SPACES_PER_TAB = 4
 
+
 def format_comments(lines):
     lengths = [len(line) for line, comment in lines]
     comment_col = max(lengths) + 2
 
     if comment_col < MIN_COMMENT_COL:
         comment_col = MIN_COMMENT_COL
-    
+
     last_line = ''
     for line, comment in lines:
         if comment is not None:
@@ -32,10 +33,11 @@ def format_comments(lines):
                 line = ''.join((line, ' ' * last_spaces, '; ', comment))
             else:
                 line = ';'
-        
+
         yield line
 
         last_line = line
+
 
 class TpBlock(object):
     def __init__(self, lines=None):
@@ -61,46 +63,38 @@ class TpCoord(object):
         self.motor = int(motor)
         self.axis = axis
         self.comment = comment
-    
+
     def config_str(self, config=None):
         if config is None or config.coord is None or config.coord.number != self.coord_sys:
             yield '&%d%s' % (self.coord_sys, self)
         else:
             yield str(self)
-            
+
     def __str__(self):
         return '#%d->%s' % (self.motor, self.axis)
 
 
 class TpCoordSys(object):
     MAX_MOTORS = 32
+
     def __init__(self, number):
         self.coord_sys = int(number)
         self.coords = {}
-    
+
     def set(self, number, tpcoord):
         self.coords[number] = tpcoord
 
     def config_str(self, config=None):
         yield '&%d' % self.coord_sys
 
-        lines = [('%s' % coord, coord.comment) 
+        lines = [('%s' % coord, coord.comment)
                  for num, coord in sorted(self.coords.items(), key=lambda (k, v): k)]
-        
+
         for line in format_comments(lines):
             yield line
 
     def __str__(self):
         return '\n'.join(self.config_str())
-
-
-first_word_re = re.compile('^\s*([a-zA-Z]+).*?')
-def get_first_word(line):
-    m = first_word_re.match(line.lower())
-    if m:
-        return m.groups()[0]
-    else:
-        return line
 
 
 class TpVar(object):
@@ -113,7 +107,7 @@ class TpVar(object):
 
         self.var, self.value = var, value.strip()
         self.comment = comment
-    
+
     @property
     def var_str(self):
         return '%s%s' % (self.type_, self.var)
@@ -125,16 +119,16 @@ class TpVar(object):
             eq = '='
 
         yield '%s%s%s%s' % (self.type_.upper(), self.var, eq, self.value)
-    
+
     def __str__(self):
         return '\n'.join(self.config_str())
-    
+
     def annotate(self):
         value = self.value
 
         if self.type_ == 'm':
             value = util.clean_addr(value)
-         
+
             try:
                 desc = info.mem_info[value.lower()][0]
             except KeyError:
@@ -145,7 +139,7 @@ class TpVar(object):
                 desc, category, page = info.ivar_info[self.var_str]
             except KeyError:
                 return
-            
+
         if self.comment:
             if desc in self.comment:
                 pass
@@ -153,31 +147,30 @@ class TpVar(object):
                 self.comment = '%s [%s]' % (self.comment, desc)
         else:
             self.comment = desc
-        
 
     @property
     def page(self):
         if self.type_ == 'i':
             try:
-               desc, category, page  = info.ivar_info[self.var_str]
+                desc, category, page = info.ivar_info[self.var_str]
             except KeyError:
                 pass
-            else: 
+            else:
                 return int(page)
-        
+
 
 class TpVars(object):
     def __init__(self, type_):
         self.type_ = type_
         assert(type_ in VAR_TYPES)
         self.items = {}
-    
+
     def __iter__(self):
-         for var, tpvar in sorted(self.items.items(), key=lambda (k, v): k):
-             yield tpvar
+        for var, tpvar in sorted(self.items.items(), key=lambda (k, v): k):
+            yield tpvar
 
     def config_str(self, config=None):
-        lines = [('%s' % tpvar, tpvar.comment) 
+        lines = [('%s' % tpvar, tpvar.comment)
                  for var, tpvar in sorted(self.items.items(), key=lambda (k, v): k)]
 
         for line in format_comments(lines):
@@ -195,12 +188,13 @@ class TpVars(object):
 class TpPlcBlock(object):
     _ref_res = [re.compile('([pmqi]\([^\)]+\))', flags=re.IGNORECASE),
                 re.compile('([pmqi]\d+)', flags=re.IGNORECASE)]
+
     def __init__(self, number, clear=True):
         self.number = int(number)
         self.clear = bool(clear)
 
         self.lines = []
-        
+
     def append(self, line, comment):
         self.lines.append((line, comment))
 
@@ -211,31 +205,31 @@ class TpPlcBlock(object):
         deindent_words = ()
         deindent_immediate = ('else', 'end')
         for i, (line, comment) in enumerate(self.lines):
-            word = get_first_word(line)
+            word = util.get_first_word(line)
             if word in deindent_immediate:
                 indent -= indent_amount
-            
+
             if line.strip():
                 line = ''.join((' ' * indent, line.lstrip()))
             else:
                 line = ''
 
             self.lines[i] = (line, comment)
-            
+
             if word in indent_words:
                 indent += indent_amount
             elif word in deindent_words:
                 indent -= indent_amount
-            
+
     def config_str(self, config=None):
         if self.clear:
             yield 'OPEN PLC %d CLEAR' % self.number
         else:
             yield 'OPEN PLC %d' % self.number
-       
+
         for line in format_comments(self.lines):
             yield line
-        
+
         yield 'CLOSE'
 
     def __iter__(self):
@@ -250,7 +244,7 @@ class TpPlcBlock(object):
                     refs.add(ref)
 
         return list(sorted(refs))
-        
+
     def __str__(self):
         return '\n'.join(self.config_str())
 
@@ -266,7 +260,7 @@ class TpConfig(object):
             self.load_config(fn, **load_opts)
         else:
             self._clear()
-    
+
     @staticmethod
     def parse_lines(lines):
         for i, line in enumerate(lines):
@@ -284,9 +278,9 @@ class TpConfig(object):
                 comment = comment.strip()
             else:
                 comment = None
-            
+
             yield i, line, comment
-    
+
     def _clear(self):
         self.coords = {}
         self.coord = None
@@ -296,7 +290,7 @@ class TpConfig(object):
         self._plc = None
         self._unparsed = []
         self._var_block = None
-        
+
         self.last_coord = 0
         self.blocks = []
 
@@ -306,19 +300,19 @@ class TpConfig(object):
 
     def load_config(self, fn, **kwargs):
         self._clear()
-        
+
         if hasattr(fn, 'readlines'):
             f = fn
         else:
             f = open(fn, 'rt')
 
         self.lines = [line.rstrip() for line in f.readlines()]
-        
+
         for line_num, line, comment in TpConfig.parse_lines(self.lines):
             self._eval_line(line_num, line, comment, **kwargs)
-        
+
         self._unparsed_block()
-    
+
     def dump(self, reformat=False, reformat_kw={}):
         for block in self.blocks:
             if hasattr(block, 'reformat') and reformat:
@@ -338,7 +332,7 @@ class TpConfig(object):
     @property
     def last_block(self):
         return self.blocks[-1]
-    
+
     def _matched_var(self, m, line_num, line, comment, eval_kwargs):
         var, eq, value = m.groups()
         tpvar = TpVar(var, value.strip(), comment)
@@ -356,7 +350,7 @@ class TpConfig(object):
 
     def _matched_coord(self, m, line_num, line, comment, eval_kwargs):
         coord_sys = int(m.groups()[0])
-        
+
         self.last_coord = coord_sys
 
         last_block = self.last_block
@@ -365,14 +359,14 @@ class TpConfig(object):
             pass
         else:
             self.blocks.append(TpCoordSys(coord_sys))
-        
+
         if m.groups()[1]:
             self._eval_line(line_num, m.groups()[1], comment, **eval_kwargs)
-    
+
     def _matched_coord_def(self, m, line_num, line, comment, eval_kwargs):
         motor, axis = m.groups()
         motor = int(motor)
-        
+
         last_block = self.last_block
         if isinstance(last_block, TpCoordSys):
             coord_sys = last_block
@@ -391,22 +385,22 @@ class TpConfig(object):
 
     def _eval_line(self, line_num, line, comment, verbose=True):
         line_lower = line.lower().strip()
-            
+
         eval_kwargs = dict(verbose=verbose)
 
         if self._plc:
-            if get_first_word(line_lower) == 'close':
+            if util.get_first_word(line_lower) == 'close':
                 self._plc = None
             else:
                 self._plc.append(line, comment)
 
-        else: 
+        else:
             matches = [(self.var_re, self._matched_var),
                        (self.coord_re, self._matched_coord),
                        (self.coord_def_re, self._matched_coord_def),
                        (self.plc_re, self._matched_plc),
                        ]
-            
+
             for regex, fcn in matches:
                 m = regex.match(line)
                 if m:
@@ -420,7 +414,7 @@ class TpConfig(object):
             elif line_lower == 'undefine all':
                 self.coords = []
                 self.coord = None
-            
+
             if verbose and line:
                 print('* [Line %d] unparsed: %s' % (line_num, line))
 
