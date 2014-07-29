@@ -130,7 +130,7 @@ class TpVar(object):
             value = util.clean_addr(value)
 
             try:
-                desc = info.mem_info[value.lower()][0]
+                desc = info.mem_info[value][0]
             except KeyError:
                 return
 

@@ -53,6 +53,8 @@ from tpmac.clean import clean_pmc
 
 
 def open_documentation_pdf(pdf='turbo_srm.pdf', page=0):
+    print('Opening pdf %s, page %d...' % (pdf, page))
+
     fn = None
     pdf = os.path.abspath(pdf)
     pdf = pdf.replace('\\', '/')
@@ -67,6 +69,44 @@ def open_documentation_pdf(pdf='turbo_srm.pdf', page=0):
     webbrowser.open_new_tab(fn)
 
 
+def show_tooltip(text):
+    QtGui.QToolTip.showText(QtGui.QCursor.pos(), text)
+
+
+class LookupWidget(QtGui.QFrame):
+    def __init__(self, entries, parent=None):
+        QtGui.QFrame.__init__(self, parent)
+
+        self.list_ = QtGui.QListWidget()
+        self.list_.itemDoubleClicked.connect(self.open_)
+
+        for entry, page in sorted(entries):
+            item = QtGui.QListWidgetItem(entry)
+            item.setData(QtCore.Qt.UserRole, page)
+            self.list_.addItem(item)
+
+        self.open_button = QtGui.QPushButton('&Open')
+        self.open_button.setDefault(True)
+        self.open_button.released.connect(self.open_)
+
+        self.cancel_button = QtGui.QPushButton('&Cancel')
+        self.cancel_button.setShortcut(QtGui.QKeySequence('Esc'))
+        self.cancel_button.released.connect(self.close)
+
+        self.layout = QtGui.QFormLayout()
+        self.layout.addWidget(self.list_)
+        self.layout.addRow(self.open_button, self.cancel_button)
+        self.setLayout(self.layout)
+
+    def open_(self, item=None):
+        item = self.list_.currentItem()
+        if item:
+            page = item.data(QtCore.Qt.UserRole).toPyObject()
+
+            open_documentation_pdf(page=page)
+            self.close()
+
+
 class TextEditor(Qsci.QsciScintilla):
     ARROW_MARKER_NUM = 8
 
@@ -74,7 +114,7 @@ class TextEditor(Qsci.QsciScintilla):
     #     http://eli.thegreenplace.net/2011/04/01/sample-using-qscintilla-with-pyqt/
     def __init__(self, lexer_type=Qsci.QsciLexerPascal, font_name='Consolas',
                  parent=None):
-        super(TextEditor, self).__init__(parent)
+        Qsci.QsciScintilla.__init__(self, parent)
 
         self.setReadOnly(True)
 
@@ -118,8 +158,79 @@ class TextEditor(Qsci.QsciScintilla):
         # Use raw message to Scintilla here (all messages are documented
         # here: http://www.scintilla.org/ScintillaDoc.html)
         self.SendScintilla(self.SCI_SETHSCROLLBAR, 0)
+        self.SendScintilla(self.SCI_SETMOUSEDWELLTIME, 1000)
 
         self.setMinimumSize(600, 450)
+
+        self.copy_action = QtGui.QAction('&Copy', self)
+        self.copy_action.setShortcut(QtGui.QKeySequence('Ctrl+C'))
+        self.copy_action.triggered.connect(self.act_copy)
+
+        self.select_all_action = QtGui.QAction('Select &all', self)
+        self.select_all_action.setShortcut(QtGui.QKeySequence('Ctrl+A'))
+        self.select_all_action.triggered.connect(self.act_select_all)
+
+        self.lookup_action = QtGui.QAction('&Look up...', self)
+        self.lookup_action.triggered.connect(lambda _: self.lookup())
+        self.lookup_action.setEnabled(True)
+        self.addAction(self.lookup_action)
+
+        # To get the hover tooltips, connect the 'dwell start' signal
+        self.SCN_DWELLSTART.connect(self.dwell_start)
+
+    def dwell_start(self, letter_pos, x, y):
+        word = self.wordAtPoint(QtCore.QPoint(x, y))
+        self.lookup(str(word), tooltip_only=True)
+
+    def focusInEvent(self, event):
+        self.lookup_action.setShortcuts([QtGui.QKeySequence('F1'),
+                                         QtGui.QKeySequence('Ctrl+I'),
+                                         ])
+        return Qsci.QsciScintilla.focusInEvent(self, event)
+
+    def focusOutEvent(self, event):
+        self.lookup_action.setShortcuts([])
+        return Qsci.QsciScintilla.focusOutEvent(self, event)
+
+    def act_copy(self):
+        clipboard = QtGui.QApplication.clipboard()
+        clipboard.setText(self.selectedText())
+
+    def act_select_all(self):
+        first_line = self.firstVisibleLine()
+
+        last_line = self.lines()
+        self.setSelection(0, 0, last_line, self.lineLength(last_line))
+
+        self.setFirstVisibleLine(first_line)
+
+    def lookup(self, text=None, tooltip_only=False):
+        if text is None:
+            text = str(self.selectedText())
+
+        entries = tp_info.lookup(text)
+
+        if not entries:
+            return
+
+        if tooltip_only:
+            if len(entries) == 1:
+                text, page = entries[0]
+                text = '%s (page=%d)' % (text, page)
+                print('Documentation: %s' % text)
+                show_tooltip(text)
+            return
+
+        if len(entries) == 1:
+            text, page = entries[0]
+            print('Documentation: %s' % text)
+            if page is not None:
+                open_documentation_pdf(page=page)
+            else:
+                show_tooltip(text)
+        else:
+            self._lookup_widget = LookupWidget(entries)
+            self._lookup_widget.show()
 
     def on_margin_clicked(self, nmargin, nline, modifiers):
         # Toggle marker for the line the margin was clicked on
@@ -127,6 +238,19 @@ class TextEditor(Qsci.QsciScintilla):
             self.markerDelete(nline, self.ARROW_MARKER_NUM)
         else:
             self.markerAdd(nline, self.ARROW_MARKER_NUM)
+
+    def contextMenuEvent(self, event):
+        text = str(self.selectedText())
+        if text:
+            menu = QtGui.QMenu()
+            menu.addAction(self.lookup_action)
+            menu.addSeparator()
+            menu.addAction(self.copy_action)
+            menu.addAction(self.select_all_action)
+
+            menu.exec_(event.globalPos())
+        else:
+            return Qsci.QsciScintilla.contextMenuEvent(self, event)
 
 
 class RefListWidget(QtGui.QListWidget):
@@ -163,10 +287,10 @@ class RefListWidget(QtGui.QListWidget):
         else:
             page = int(page)
             s = []
-            s.append('I-variable: %s category: %s' % (text, category))
-            s.append('Description: %s' % desc)
+            s.append('%s (%s)' % (text, category))
+            s.append('%s' % desc)
 
-            s.append('PDF page <a href="%s">%d</a>' % (page, page))
+            s.append('Documentation page <a href="%d">%d</a>' % (page, page))
             s = '<br>\n'.join(s)
             self.refwidget.info.setText(s)
             return
@@ -181,9 +305,8 @@ class RefListWidget(QtGui.QListWidget):
             pass
         else:
             page = int(page)
-            print('I-variable: %s category: %s' % (text, category))
-            print('Description: %s' % desc)
-            print('Opening pdf, page %d' % page)
+            print('%s (%s)' % (text, category))
+            print('%s' % desc)
             open_documentation_pdf(page=page)
             return
 
@@ -196,10 +319,10 @@ class RefListWidget(QtGui.QListWidget):
 
         if self._last_clicked is list_item:
             self.editor.findNext()
-            main.full_widget.findNext()
+            main.full_text_widget.findNext()
         else:
             self.editor.findFirst(text, False, False, False, True)
-            main.full_widget.findFirst(text, False, False, False, True)
+            main.full_text_widget.findFirst(text, False, False, False, True)
 
         self._last_clicked = list_item
 
@@ -253,12 +376,6 @@ class MainWindow(QtGui.QMainWindow):
 
         self.main_splitter = QtGui.QSplitter()
 
-        self.setCentralWidget(self.main_splitter)
-
-        self.plc_tabs = QtGui.QTabWidget()
-
-        self.main_splitter.addWidget(self.plc_tabs)
-
         if clean:
             print('Cleaning file...')
             output = StringIO()
@@ -270,13 +387,18 @@ class MainWindow(QtGui.QMainWindow):
 
         self.config = config = TpConfig(fn)
 
-        for plc_num, plc in config.plcs.items():
-            self.plc_tabs.addTab(PLCEditor(plc), 'PLC %d' % plc.number)
+        if config.plcs:
+            self.plc_tabs = QtGui.QTabWidget()
+            self.main_splitter.addWidget(self.plc_tabs)
 
-        self.full_widget = TextEditor()
-        self.full_widget.setText('\n'.join(config.dump()))
+            for plc_num, plc in config.plcs.items():
+                self.plc_tabs.addTab(PLCEditor(plc), 'PLC %d' % plc.number)
 
-        self.main_splitter.addWidget(self.full_widget)
+        self.full_text_widget = TextEditor()
+        self.full_text_widget.setText('\n'.join(config.dump()))
+
+        self.main_splitter.addWidget(self.full_text_widget)
+        self.setCentralWidget(self.main_splitter)
 
 
 if __name__ == "__main__":

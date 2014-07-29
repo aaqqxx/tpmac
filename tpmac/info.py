@@ -287,6 +287,35 @@ def generate_settings(profile, ivar_fns=(RAW_TOC_FN, IVAR_FN),
     generate_toc_info(*toc_fns)
 
 
+def lookup(text):
+    global ivar_info, mem_info, toc_info
+    text = text.strip()
+    if not text:
+        return []
+
+    if ':$' in text:
+        mem = util.clean_addr(text)
+
+        try:
+            desc = mem_info[mem][0]
+        except KeyError:
+            pass
+        else:
+            return [(desc, None)]
+
+    elif text[0] in ('i', 'I'):
+        try:
+            desc, category, page = ivar_info[text]
+        except KeyError:
+            pass
+        else:
+            return [('%s [%s]' % (desc, category), int(page))]
+
+    contents = toc_info
+    return [('%s [%s]' % (desc_, cat_), int(page_))
+            for desc_, (cat_, page_) in contents.search(text)]
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print('Usage: %s profile_name' % (sys.argv[0]))
