@@ -53,7 +53,7 @@ def _eval_ivar(f, page, ivar, category, desc):
     elif '-' in ivar:
         r0, r1 = [util.ivar_to_int(iv) for iv in ivar.split('-')]
         for i in range(r0, r1 + 1):
-            _eval_ivar(f, page, util.int_to_ivar(i), category, desc)
+            _eval_ivar(f, page, 'i%d' % i, category, desc)
     else:
         try:
             ivar_int = util.ivar_to_int(ivar)
@@ -187,10 +187,21 @@ def generate_mem_info(fn, output_fn):
 
 
 class Info(object):
-    def __init__(self, fn, delim='\t'):
+    def __init__(self, fn=None, delim='\t'):
+        self.clear()
+
+        if fn is not None:
+            self.load_file(fn, delim=delim)
+
+    def clear(self):
         self.data = {}
         self._lower_keys = {}
         self._lower_data = {}
+
+    def load_file(self, fn, delim='\t', clear=True):
+        if clear:
+            self.clear()
+
         for line in open(fn, 'rt').readlines():
             line = line.strip()
             if line.startswith('#'):
@@ -228,16 +239,25 @@ class Info(object):
             if case_insensitive:
                 s = s.lower()
 
-            if text in s.lower():
+            s = s.decode('ascii', 'ignore')
+
+            if text in s:
                 yield (key, values)
 
 
-class IvarInfo(Info):
+class VarInfo(Info):
+    def __init__(self, type_='i', **kwargs):
+        self.type_ = type_
+        Info.__init__(self, **kwargs)
+
     def __getitem__(self, key):
-        return Info.__getitem__(self, util.clean_ivar(key))
+        if '->' in key:
+            key = key.split('->', 1)[0]
+
+        return Info.__getitem__(self, util.clean_var(key, type_=self.type_))
 
     def add_item(self, key, data):
-        return Info.add_item(self, util.clean_ivar(key), data)
+        return Info.add_item(self, util.clean_var(key, type_=self.type_), data)
 
 
 class MemInfo(Info):
@@ -278,13 +298,13 @@ def load_settings(profile, ivar_fn=IVAR_FN, mem_fn=MEM_FN,
     profile_path = util.get_profile_path(profile)
 
     ivar_fn = os.path.join(profile_path, ivar_fn)
-    ivar_info = IvarInfo(ivar_fn)
+    ivar_info = VarInfo(fn=ivar_fn, type_='i')
 
     mem_fn = os.path.join(profile_path, mem_fn)
-    mem_info = MemInfo(mem_fn)
+    mem_info = MemInfo(fn=mem_fn)
 
     toc_fn = os.path.join(profile_path, toc_fn)
-    toc_info = Info(toc_fn)
+    toc_info = Info(fn=toc_fn)
 
 
 def generate_settings(profile, ivar_fns=(RAW_TOC_FN, IVAR_FN),
@@ -315,13 +335,18 @@ def lookup(text):
         else:
             return [(desc, None)]
 
-    elif text[0] in ('i', 'I'):
-        try:
-            desc, category, page = ivar_info[text]
-        except KeyError:
-            pass
-        else:
-            return [('%s [%s]' % (desc, category), int(page))]
+    try:
+        var_type, num = util.var_split(text)
+    except ValueError:
+        pass
+    else:
+        if var_type == 'i':
+            try:
+                desc, category, page = ivar_info[text]
+            except KeyError:
+                pass
+            else:
+                return [('%s [%s]' % (desc, category), int(page))]
 
     contents = toc_info
     return [('%s [%s]' % (desc_, cat_), int(page_))

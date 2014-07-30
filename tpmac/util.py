@@ -9,6 +9,7 @@ import os
 import re
 
 VAR_TYPES = 'pqmi'
+simple_var_re = re.compile('^([pqmi])(\d+)$', flags=re.IGNORECASE)
 FIRST_WORD_RE = re.compile('^\s*([a-zA-Z]+).*?')
 
 
@@ -19,24 +20,29 @@ def clean_addr(addr):
 
     return addr
 
+def var_split(var):
+    m = simple_var_re.match(var.strip())
+    if not m:
+        raise ValueError('Not a variable: %s' % var)
+
+    var_type, var_num = m.groups()
+    return var_type.lower(), int(var_num)
+
 
 def ivar_to_int(ivar):
-    ivar = ivar.upper()
-    if not ivar.startswith('I'):
+    type_, num = var_split(ivar)
+    if type_ != 'i':
         raise ValueError('not I variable')
 
-    if '/' in ivar or '-' in ivar:
-        raise ValueError('ivar range')
-
-    return int(ivar[1:])
+    return num
 
 
-def int_to_ivar(i):
-    return 'I%d' % i
+def clean_var(var, type_=None):
+    var_type, num = var_split(var)
+    if type_ is not None and var_type != type_.lower():
+        raise ValueError('Variable type mismatch')
 
-
-def clean_ivar(ivar):
-    return int_to_ivar(ivar_to_int(ivar))
+    return '%s%d' % (var_type, num)
 
 
 def get_profile_path(profile):

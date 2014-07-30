@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 # vi: ts=4 sw=4
 """
-Usage: viewer.py [-c] [--pdf=FILE] [--profile=geobrick_lv] PMC_FILE
+Usage: viewer.py [-c] [--pdf=FILE] [--mconf=FILE] [--profile=geobrick_lv] PMC_FILE
        viewer.py --download [--pdf=FILE]
+
+Displays turbo pmac configuration files
 
 Arguments:
     PMC_FILE         the PMC file to display
 
 Options:
-    -c --clean       clean pmc file first
+    -c --clean       clean pmc file first (fix tabs, annotate lines)
     -p --profile=x   variable information profile [default: geobrick_lv]
     -d --download    download "turbo srm.pdf" from Delta Tau website (http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf)
     -p --pdf=FILE    specify pdf documentation location (current index is of 2014/2/14 manual) [default: turbo_srm.pdf]
+    -m --mconf=FILE  specify an additional configuration file that has M variable definitions for annotation
 """
 
 from __future__ import print_function
@@ -302,22 +305,39 @@ class RefListWidget(QtGui.QListWidget):
 
     def update_description(self, list_item):
         text = '%s' % list_item.text()
-        try:
-            desc, category, page = tp_info.ivar_info[text]
-        except KeyError:
-            pass
-        else:
-            page = int(page)
-            s = []
-            s.append('%s (%s)' % (text, category))
-            s.append('%s' % desc)
 
-            s.append('Documentation page <a href="%d">%d</a>' % (page, page))
-            s = '<br>\n'.join(s)
-            self.refwidget.info.setText(s)
-            return
+        info = []
 
-        self.refwidget.info.setText('')
+        def lookup(text):
+            for desc, page in tp_info.lookup(text):
+                yield desc, page
+
+            main = MainWindow.instance
+            mvar_info = main.mvar_info
+
+            if mvar_info is not None:
+                try:
+                    addr = mvar_info[text][0]
+                except ValueError:  # not an m-variable
+                    pass
+                except KeyError:
+                    pass
+                else:
+                    try:
+                        mem_info = tp_info.mem_info[addr][0]
+                    except:
+                        mem_info = 'unknown'
+
+                    yield ('%s->%s [%s]' % (text, addr, mem_info), None)
+
+        for desc, page in lookup(text):
+            info.append(desc)
+            if page is not None:
+                page = int(page)
+                info.append('Documentation page <a href="%d">%d</a>' % (page, page))
+
+        s = '<br>\n'.join(info)
+        self.refwidget.info.setText(s)
 
     def open_pdf(self, list_item):
         text = '%s' % list_item.text()
@@ -396,6 +416,8 @@ class MainWindow(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self)
         MainWindow.instance = self
 
+        self.mvar_info = None
+
         self.setWindowTitle('TpView - [%s]' % fn)
 
         self.main_splitter = QtGui.QSplitter()
@@ -423,6 +445,14 @@ class MainWindow(QtGui.QMainWindow):
 
         self.main_splitter.addWidget(self.full_text_widget)
         self.setCentralWidget(self.main_splitter)
+
+    def load_mvars(self, fn):
+        conf = TpConfig(fn)
+        self.mvar_info = tp_info.VarInfo(type_='m')
+        for tpvar in conf.variables['m']:
+            var_name = tpvar.var_str
+            addr = tpvar.value
+            self.mvar_info.add_item(var_name, [addr])
 
 
 def download(url, filename):
@@ -462,5 +492,9 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication(sys.argv)
     main = MainWindow(pmc_file, clean=opts['--clean'])
+
+    if opts['--mconf']:
+        main.load_mvars(opts['--mconf'])
+
     main.show()
     app.exec_()
