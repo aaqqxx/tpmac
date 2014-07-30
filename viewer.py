@@ -26,7 +26,6 @@ except ImportError:
     from io import StringIO
 
 import tempfile
-import webbrowser
 
 try:
     from PyQt4 import QtGui
@@ -71,18 +70,28 @@ def open_documentation_pdf(page=0):
     pdf = PDF_FILE
     print('Opening pdf %s, page %d...' % (pdf, page))
 
-    fn = None
     pdf = os.path.abspath(PDF_FILE)
-    pdf = pdf.replace('\\', '/')
-    url = 'file:///%s#page=%d' % (pdf, page)
+    url = QtCore.QUrl.fromLocalFile(pdf)
+    if page is not None:
+        url.setFragment('page=%d' % page)
 
-    template = open('redirect_template.html', 'rt').read()
+    if sys.platform.startswith('win'):
+        # URL fragments don't work on Windows, so use a temporary html
+        # file which redirects to the pdf at the proper page
+        template = open('redirect_template.html', 'rt').read()
 
-    with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as f:
-        fn = f.name
-        print(template % locals(), file=f)
+        temp_fn = None
 
-    webbrowser.open_new_tab(fn)
+        url = unicode(url.toString())
+        with tempfile.NamedTemporaryFile(suffix='.html', delete=False) as f:
+            temp_fn = f.name
+            template = unicode(template) % locals()
+            print(template.encode('utf-8'), file=f)
+
+        url = QtCore.QUrl.fromLocalFile(temp_fn)
+
+    services = QtGui.QDesktopServices()
+    services.openUrl(url)
 
 
 def show_tooltip(text):
