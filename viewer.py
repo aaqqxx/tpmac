@@ -17,9 +17,12 @@ Options:
     -m --mconf=FILE  specify an additional configuration file that has M variable definitions for annotation
 """
 
+# TODO option for executing program instead of relying on browser pdf viewer
 from __future__ import print_function
 import os
 import sys
+import atexit
+
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -63,10 +66,28 @@ from tpmac.clean import clean_pmc
 
 PDF_FILE = 'turbo_srm.pdf'
 PDF_URL = 'http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf'
+__temp_files__ = []
 
 
-def open_documentation_pdf(page=0):
+@atexit.register
+def _cleanup_temp_files():
+    global __temp_files__
+
+    for fn in list(__temp_files__):
+        try:
+            os.unlink(fn)
+        except:
+            pass
+        else:
+            __temp_files__.remove(fn)
+
+    if __temp_files__:
+        print('Unable to delete temporary files: %s' % ' '.join(__temp_files__))
+
+
+def open_documentation_pdf(page=0, use_browser=True):
     global PDF_FILE
+    global __temp_files__
     pdf = PDF_FILE
     print('Opening pdf %s, page %d...' % (pdf, page))
 
@@ -75,7 +96,7 @@ def open_documentation_pdf(page=0):
     if page is not None:
         url.setFragment('page=%d' % page)
 
-    if sys.platform.startswith('win'):
+    if use_browser:
         # URL fragments don't work on Windows, so use a temporary html
         # file which redirects to the pdf at the proper page
         template = open('redirect_template.html', 'rt').read()
@@ -89,6 +110,8 @@ def open_documentation_pdf(page=0):
             print(template.encode('utf-8'), file=f)
 
         url = QtCore.QUrl.fromLocalFile(temp_fn)
+
+        __temp_files__.append(temp_fn)
 
     services = QtGui.QDesktopServices()
     services.openUrl(url)
