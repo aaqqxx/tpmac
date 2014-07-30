@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # vi: ts=4 sw=4
+"""
+tpmac.conf
+Loads/saves turbo pmac configuration files, retaining the original
+line order, comments, etc.
+"""
+
 from __future__ import print_function
 import re
 

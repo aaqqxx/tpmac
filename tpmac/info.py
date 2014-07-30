@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 # vi: ts=4 sw=4
+"""
+tpmac.info
+Generates (and reads) tab-separated files containing turbo pmac variable,
+memory, and documentation page locations
+"""
 
 from __future__ import print_function
 import os
@@ -7,6 +12,7 @@ import sys
 import re
 
 from . import util
+
 
 ranges = {'motor': [('%.2d' % x, [('xx', '%d' % x)]) for x in range(1, 33)],
           'macro': [('%d' % n, [(' n ', ' %d' % n)]) for n in range(1, 3)],
@@ -34,24 +40,8 @@ def cs_range():
             cs += 1
     return ret
 
+
 ranges['cs'] = cs_range()
-
-
-def ivar_to_int(ivar):
-    ivar = ivar.upper()
-    if not ivar.startswith('I'):
-        raise ValueError('not I variable')
-
-    if '/' in ivar or '-' in ivar:
-        raise ValueError('ivar range')
-
-    return int(ivar[1:])
-
-
-def int_to_ivar(i):
-    return 'I%d' % i
-
-
 ivars = {}
 
 
@@ -61,12 +51,12 @@ def _eval_ivar(f, page, ivar, category, desc):
             _eval_ivar(f, page, iv, category, desc)
         return
     elif '-' in ivar:
-        r0, r1 = [ivar_to_int(iv) for iv in ivar.split('-')]
+        r0, r1 = [util.ivar_to_int(iv) for iv in ivar.split('-')]
         for i in range(r0, r1 + 1):
-            _eval_ivar(f, page, int_to_ivar(i), category, desc)
+            _eval_ivar(f, page, util.int_to_ivar(i), category, desc)
     else:
         try:
-            ivar_int = ivar_to_int(ivar)
+            ivar_int = util.ivar_to_int(ivar)
         except:
             print('Failed: %s' % ivar)
         else:
@@ -198,8 +188,9 @@ def generate_mem_info(fn, output_fn):
 
 class Info(object):
     def __init__(self, fn, delim='\t'):
-        self.data = data = {}
+        self.data = {}
         self._lower_keys = {}
+        self._lower_data = {}
         for line in open(fn, 'rt').readlines():
             line = line.strip()
             if line.startswith('#'):
@@ -207,9 +198,12 @@ class Info(object):
 
             info = line.split(delim)
 
-            key = info[0]
-            self._lower_keys[key.lower()] = key
-            data[key] = info[1:]
+            key, data = info[0], info[1:]
+            self.add_item(key, data)
+
+    def add_item(self, key, data):
+        self._lower_keys[key.lower()] = key
+        self.data[key] = data
 
     def __getitem__(self, key):
         if key.lower() in self._lower_keys:
@@ -236,6 +230,26 @@ class Info(object):
 
             if text in s.lower():
                 yield (key, values)
+
+
+class IvarInfo(Info):
+    def __getitem__(self, key):
+        return Info.__getitem__(self, util.clean_ivar(key))
+
+    def add_item(self, key, data):
+        return Info.add_item(self, util.clean_ivar(key), data)
+
+
+class MemInfo(Info):
+    def __getitem__(self, key):
+        if '->' in key:
+            key = key.split('->', 1)[1]
+
+        return Info.__getitem__(self, util.clean_addr(key))
+
+    def add_item(self, key, data):
+        return Info.add_item(self, util.clean_addr(key), data)
+
 
 # table of contents file generated using:
 #    pdftotext -layout turbo_srm.pdf and partially hand-tweaked
@@ -264,10 +278,10 @@ def load_settings(profile, ivar_fn=IVAR_FN, mem_fn=MEM_FN,
     profile_path = util.get_profile_path(profile)
 
     ivar_fn = os.path.join(profile_path, ivar_fn)
-    ivar_info = Info(ivar_fn)
+    ivar_info = IvarInfo(ivar_fn)
 
     mem_fn = os.path.join(profile_path, mem_fn)
-    mem_info = Info(mem_fn)
+    mem_info = MemInfo(mem_fn)
 
     toc_fn = os.path.join(profile_path, toc_fn)
     toc_info = Info(toc_fn)
@@ -294,10 +308,8 @@ def lookup(text):
         return []
 
     if ':$' in text:
-        mem = util.clean_addr(text)
-
         try:
-            desc = mem_info[mem][0]
+            desc = mem_info[text][0]
         except KeyError:
             pass
         else:

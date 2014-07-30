@@ -3,6 +3,8 @@
 """
 Usage: tpmac.clean [-fav] [--indent=2] [--profile=geobrick_lv] [--min-col=10] INPUT_PMC [OUTPUT_PMC]
 
+Cleans up indentation and optionally annotates Turbo PMAC configuration files (.pmc)
+
 Arguments:
     INPUT_PMC        the PMC file to process
     OUTPUT_PMC       optionally output to a file (stdout by default)
@@ -25,15 +27,16 @@ from . import conf
 from .conf import TpConfig
 from . import info as tp_info
 
-def clean_pmc(input_fn, verbose=False, annotate=False, 
+
+def clean_pmc(input_fn, verbose=False, annotate=False,
               fix_indent=False, indent=2):
     config = TpConfig(input_fn, verbose=verbose)
-    
+
     if annotate:
         for vars_ in config.variables.values():
             for tpvar in vars_:
                 tpvar.annotate()
-    
+
     if fix_indent:
         for plc in config.plcs.values():
             plc.reformat(start_indent=indent, indent_amount=indent)
@@ -63,6 +66,6 @@ if __name__ == '__main__':
         output_ = open(output_fn, 'wt')
     else:
         output_ = sys.stdout
-   
+
     for line in ret:
         print(line, file=output_)
