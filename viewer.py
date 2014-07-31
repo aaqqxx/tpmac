@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vi: ts=4 sw=4
 """
-Usage: viewer.py [-c] [--pdf=FILE] [--mconf=FILE] [--profile=geobrick_lv] PMC_FILE
+Usage: viewer.py [-c] [--pdf=FILE] [--profile=geobrick_lv] PMC_FILE [PMC_FILE [PMC_FILE... ]]
        viewer.py --download [--pdf=FILE]
 
 Displays turbo pmac configuration files
@@ -14,7 +14,6 @@ Options:
     -p --profile=x   variable information profile [default: geobrick_lv]
     -d --download    download "turbo srm.pdf" from Delta Tau website (http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf)
     -p --pdf=FILE    specify pdf documentation location (current index is of 2014/2/14 manual) [default: turbo_srm.pdf]
-    -m --mconf=FILE  specify an additional configuration file that has M variable definitions for annotation
 """
 
 # TODO option for executing program instead of relying on browser pdf viewer
@@ -162,9 +161,12 @@ class TextEditor(Qsci.QsciScintilla):
 
     # based on:
     #     http://eli.thegreenplace.net/2011/04/01/sample-using-qscintilla-with-pyqt/
-    def __init__(self, lexer_type=Qsci.QsciLexerPascal, font_name='Consolas',
+    def __init__(self, main, fn, lexer_type=Qsci.QsciLexerPascal, font_name='Courier',
                  parent=None):
         Qsci.QsciScintilla.__init__(self, parent)
+
+        self.main = main
+        self.filename = fn
 
         self.setReadOnly(True)
 
@@ -311,18 +313,27 @@ class TextEditor(Qsci.QsciScintilla):
 
 
 class RefListWidget(QtGui.QListWidget):
-    def __init__(self, refwidget, plc, editor):
+    def __init__(self, refwidget, plc, plc_text_editor):
         QtGui.QListWidget.__init__(self)
+
+        self.main = refwidget.main
 
         self.refwidget = refwidget
         self.plc = plc
-        self.editor = editor
+        self.plc_text_editor = plc_text_editor
 
         self._last_clicked = None
         self.itemDoubleClicked.connect(self.jump_to_item)
-        self.itemDoubleClicked.connect(self.jump_to_item)
 
         self.itemSelectionChanged.connect(self.item_selected)
+
+    @property
+    def filename(self):
+        return self.refwidget.filename
+
+    @property
+    def full_text_widget(self):
+        return self.main.full_text_widgets[self.filename]
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Return:
@@ -344,8 +355,7 @@ class RefListWidget(QtGui.QListWidget):
             for desc, page in tp_info.lookup(text):
                 yield desc, page
 
-            main = MainWindow.instance
-            mvar_info = main.mvar_info
+            mvar_info = self.main.mvar_info
 
             if mvar_info is not None:
                 try:
@@ -389,23 +399,24 @@ class RefListWidget(QtGui.QListWidget):
     def jump_to_item(self, list_item):
         text = list_item.text()
 
-        main = MainWindow.instance
-
         if self._last_clicked is list_item:
-            self.editor.findNext()
-            main.full_text_widget.findNext()
+            self.plc_text_editor.findNext()
+            self.full_text_widget.findNext()
         else:
-            self.editor.findFirst(text, False, False, False, True)
-            main.full_text_widget.findFirst(text, False, False, False, True)
+            self.plc_text_editor.findFirst(text, False, False, False, True)
+            self.full_text_widget.findFirst(text, False, False, False, True)
 
         self._last_clicked = list_item
 
 
 class RefWidget(QtGui.QFrame):
-    def __init__(self, plc, editor):
+    def __init__(self, plc, text_editor, filename):
         QtGui.QFrame.__init__(self)
 
-        self.list_ = RefListWidget(self, plc, editor)
+        self.main = text_editor.main
+        self.filename = filename
+
+        self.list_ = RefListWidget(self, plc, text_editor)
         self.info = QtGui.QLabel()
 
         self.layout = QtGui.QVBoxLayout()
@@ -423,15 +434,17 @@ class RefWidget(QtGui.QFrame):
 
 
 class PLCEditor(QtGui.QSplitter):
-    def __init__(self, plc, reformat=False, parent=None):
+    def __init__(self, main, plc, fn, reformat=False, parent=None):
         QtGui.QFrame.__init__(self, QtCore.Qt.Vertical, parent)
+
+        self.main = main
         self.plc = plc
 
         if reformat:
             plc.reformat()
 
-        self.editor = TextEditor()
-        self.refs = RefWidget(plc, self.editor)
+        self.editor = TextEditor(main, fn)
+        self.refs = RefWidget(plc, self.editor, fn)
 
         self.addWidget(self.refs)
         self.addWidget(self.editor)
@@ -443,45 +456,59 @@ class PLCEditor(QtGui.QSplitter):
         self.editor.setText('%s' % plc)
 
 
+class PLCView(QtGui.QTabWidget):
+    def __init__(self, main, fn):
+        QtGui.QTabWidget.__init__(self)
+
+        self.main = main
+        self.config = main.configs[fn]
+        self.plcs = []
+        for plc_num, plc in self.config.plcs.items():
+            plc_editor = PLCEditor(main, plc, fn)
+            self.plcs.append(plc_editor)
+            self.addTab(plc_editor, 'PLC %d' % plc.number)
+
+
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self, fn, clean=False):
+    def __init__(self, fns, clean=False):
         QtGui.QMainWindow.__init__(self)
-        MainWindow.instance = self
 
-        self.mvar_info = None
+        self.tabs = QtGui.QTabWidget()
 
-        self.setWindowTitle('TpView - [%s]' % fn)
+        self.setCentralWidget(self.tabs)
 
-        self.main_splitter = QtGui.QSplitter()
+        self.mvar_info = tp_info.VarInfo(type_='m')
+        self.configs = {}
+        self.full_text_widgets = {}
+        self.plc_widgets = {}
 
+        self.setWindowTitle('TpView - [%s]' % fns[0])
+        for fn in fns:
+            self.load_file(fn, clean)
+
+    def load_file(self, fn, clean=False):
         if clean:
-            print('Cleaning file...')
+            print('Cleaning file: %s' % fn)
             output = StringIO()
             for line in clean_pmc(fn, annotate=True, fix_indent=True):
                 print(line, file=output)
 
             output.seek(0)
-            fn = output
+            self.configs[fn] = TpConfig(output)
+        else:
+            self.configs[fn] = TpConfig(fn)
 
-        self.config = config = TpConfig(fn)
+        config = self.configs[fn]
+        ftw = self.full_text_widgets[fn] = TextEditor(self, fn)
+        ftw.setText('\n'.join(config.dump()))
+
+        self.tabs.addTab(ftw, fn)
 
         if config.plcs:
-            self.plc_tabs = QtGui.QTabWidget()
-            self.main_splitter.addWidget(self.plc_tabs)
+            plc_view = self.plc_widgets[fn] = PLCView(self, fn)
+            self.tabs.addTab(plc_view, '[%s] PLCs' % fn)
 
-            for plc_num, plc in config.plcs.items():
-                self.plc_tabs.addTab(PLCEditor(plc), 'PLC %d' % plc.number)
-
-        self.full_text_widget = TextEditor()
-        self.full_text_widget.setText('\n'.join(config.dump()))
-
-        self.main_splitter.addWidget(self.full_text_widget)
-        self.setCentralWidget(self.main_splitter)
-
-    def load_mvars(self, fn):
-        conf = TpConfig(fn)
-        self.mvar_info = tp_info.VarInfo(type_='m')
-        for tpvar in conf.variables['m']:
+        for tpvar in config.variables['m']:
             var_name = tpvar.var_str
             addr = tpvar.value
             self.mvar_info.add_item(var_name, [addr])
@@ -520,13 +547,10 @@ if __name__ == "__main__":
     tp_info.load_settings(opts['--profile'])
     pmc_file = opts['PMC_FILE']
 
-    print('PMC file is', pmc_file)
+    print('Loading: %s' % ', '.join(pmc_file))
 
     app = QtGui.QApplication(sys.argv)
     main = MainWindow(pmc_file, clean=opts['--clean'])
-
-    if opts['--mconf']:
-        main.load_mvars(opts['--mconf'])
 
     main.show()
     app.exec_()
