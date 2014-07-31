@@ -59,10 +59,10 @@ else:
 
 from docopt import docopt
 
-from tpmac.conf import TpConfig
+from tpmac.conf import (TpConfig, TpVars)
 import tpmac.info as tp_info
 from tpmac.clean import clean_pmc
-
+from tpmac import util
 
 PDF_FILE = 'turbo_srm.pdf'
 PDF_URL = 'http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf'
@@ -162,12 +162,13 @@ class TextEditor(Qsci.QsciScintilla):
 
     # based on:
     #     http://eli.thegreenplace.net/2011/04/01/sample-using-qscintilla-with-pyqt/
-    def __init__(self, main, fn, lexer_type=Qsci.QsciLexerPascal, font_name='Courier',
+    def __init__(self, cview, lexer_type=Qsci.QsciLexerPascal, font_name='Courier',
                  parent=None):
         Qsci.QsciScintilla.__init__(self, parent)
 
-        self.main = main
-        self.filename = fn
+        self.cview = cview
+        self.main = cview.main
+        self.filename = cview.fn
 
         self.setReadOnly(True)
 
@@ -318,6 +319,7 @@ class RefListWidget(QtGui.QListWidget):
         QtGui.QListWidget.__init__(self)
 
         self.main = refwidget.main
+        self.cview = refwidget.cview
 
         self.refwidget = refwidget
         self.plc = plc
@@ -329,12 +331,8 @@ class RefListWidget(QtGui.QListWidget):
         self.itemSelectionChanged.connect(self.item_selected)
 
     @property
-    def filename(self):
-        return self.refwidget.filename
-
-    @property
-    def full_text_widget(self):
-        return self.main.full_text_widgets[self.filename]
+    def source_widget(self):
+        return self.cview.source_widget
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Return:
@@ -402,20 +400,20 @@ class RefListWidget(QtGui.QListWidget):
 
         if self._last_clicked is list_item:
             self.plc_text_editor.findNext()
-            self.full_text_widget.findNext()
+            self.source_widget.findNext()
         else:
             self.plc_text_editor.findFirst(text, False, False, False, True)
-            self.full_text_widget.findFirst(text, False, False, False, True)
+            self.source_widget.findFirst(text, False, False, False, True)
 
         self._last_clicked = list_item
 
 
 class RefWidget(QtGui.QFrame):
-    def __init__(self, plc, text_editor, filename):
+    def __init__(self, plc, text_editor):
         QtGui.QFrame.__init__(self)
 
         self.main = text_editor.main
-        self.filename = filename
+        self.cview = text_editor.cview
 
         self.list_ = RefListWidget(self, plc, text_editor)
         self.info = QtGui.QLabel()
@@ -435,17 +433,17 @@ class RefWidget(QtGui.QFrame):
 
 
 class PLCEditor(QtGui.QSplitter):
-    def __init__(self, main, plc, fn, reformat=False, parent=None):
+    def __init__(self, cview, plc, reformat=False, parent=None):
         QtGui.QFrame.__init__(self, QtCore.Qt.Vertical, parent)
 
-        self.main = main
+        self.cview = cview
         self.plc = plc
 
         if reformat:
             plc.reformat()
 
-        self.editor = TextEditor(main, fn)
-        self.refs = RefWidget(plc, self.editor, fn)
+        self.editor = TextEditor(cview)
+        self.refs = RefWidget(plc, self.editor)
 
         refs = plc.find_references()
         if refs:
@@ -459,21 +457,57 @@ class PLCEditor(QtGui.QSplitter):
 
 
 class PLCView(QtGui.QTabWidget):
-    def __init__(self, main, fn):
+    def __init__(self, cview):
         QtGui.QTabWidget.__init__(self)
 
-        self.main = main
-        self.config = main.configs[fn]
+        self.cview = cview
+        self.config = cview.config
         self.plcs = []
         for plc_num, plc in self.config.plcs.items():
-            plc_editor = PLCEditor(main, plc, fn)
+            plc_editor = PLCEditor(cview, plc)
             self.plcs.append(plc_editor)
             self.addTab(plc_editor, 'PLC %d' % plc.number)
+
+
+class VariableView(QtGui.QFrame):
+    def __init__(self, vars, parent=None):
+        QtGui.QFrame.__init__(self, parent)
+
+        self.list_ = QtGui.QListWidget()
+        self.list_.itemDoubleClicked.connect(self.open_)
+
+        self.layout = QtGui.QGridLayout()
+        self.layout.addWidget(self.list_, 0, 0, 1, 2)
+        self.setLayout(self.layout)
+
+    def open_(self):
+        pass
+
+
+class ConfigView(QtGui.QTabWidget):
+    def __init__(self, main, config, fn, parent=None):
+        QtGui.QTabWidget.__init__(self, parent)
+
+        self.fn = fn
+        self.config = config
+        self.main = main
+
+        sw = self.source_widget = TextEditor(self)
+        sw.setText('\n'.join(config.dump()))
+
+        self.addTab(sw, 'Source')
+
+        if config.plcs:
+            self.plc_view = PLCView(self)
+            self.addTab(self.plc_view, 'PLCs')
 
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, fns, clean=False, load_includes=False):
         QtGui.QMainWindow.__init__(self)
+
+        if not fns:
+            return
 
         self.tabs = QtGui.QTabWidget()
 
@@ -481,11 +515,14 @@ class MainWindow(QtGui.QMainWindow):
 
         self.mvar_info = tp_info.VarInfo(type_='m')
         self.configs = {}
-        self.full_text_widgets = {}
-        self.plc_widgets = {}
+        self.config_views = {}
+        self.variables = {}
 
         self.setWindowTitle('TpView - [%s]' % fns[0])
         self.load_includes = load_includes
+
+        for var_type in util.VAR_TYPES:
+            self.variables[var_type] = TpVars(var_type)
 
         for fn in fns:
             self.load_file(fn, clean, load_includes=load_includes)
@@ -507,19 +544,17 @@ class MainWindow(QtGui.QMainWindow):
             self.configs[fn] = TpConfig(fn)
 
         config = self.configs[fn]
-        ftw = self.full_text_widgets[fn] = TextEditor(self, fn)
-        ftw.setText('\n'.join(config.dump()))
-
-        self.tabs.addTab(ftw, fn)
-
-        if config.plcs:
-            plc_view = self.plc_widgets[fn] = PLCView(self, fn)
-            self.tabs.addTab(plc_view, '[%s] PLCs' % fn)
+        config_view = self.config_views[fn] = ConfigView(self, config, fn)
+        self.tabs.addTab(config_view, fn)
 
         for tpvar in config.variables['m']:
             var_name = tpvar.var_str
             addr = tpvar.value
             self.mvar_info.add_item(var_name, [addr])
+
+        for var_type in util.VAR_TYPES:
+            for tpvar in config.variables[var_type]:
+                self.variables[var_type].add_var(tpvar)
 
         if load_includes:
             for include in config.includes:

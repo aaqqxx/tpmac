@@ -171,6 +171,12 @@ class TpVars(object):
         assert(type_ in VAR_TYPES)
         self.items = {}
 
+    def __getitem__(self, key):
+        return self.items[key]
+
+    def __setitem__(self, key, value):
+        self.items[key].value = value
+
     def __iter__(self):
         for var, tpvar in sorted(self.items.items(), key=lambda (k, v): k):
             yield tpvar
