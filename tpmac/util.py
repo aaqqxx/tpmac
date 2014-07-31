@@ -20,6 +20,7 @@ def clean_addr(addr):
 
     return addr
 
+
 def var_split(var):
     m = simple_var_re.match(var.strip())
     if not m:

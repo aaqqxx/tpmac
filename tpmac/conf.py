@@ -191,6 +191,21 @@ class TpVars(object):
         return '\n'.join(self.config_str())
 
 
+class TpInclude(object):
+    def __init__(self, fn, comment=None):
+        self.fn = fn.strip('"').strip("'")
+        self.comment = comment
+
+    def config_str(self, config=None):
+        if self.comment:
+            yield '#include "%s"  ; %s' % (self.fn, self.comment)
+        else:
+            yield '#include "%s"' % self.fn
+
+    def __str__(self):
+        return '\n'.join(self.config_str())
+
+
 class TpPlcBlock(object):
     _ref_res = [re.compile('([pmqi]\([^\)]+\))', flags=re.IGNORECASE),
                 re.compile('([pmqi]\d+)', flags=re.IGNORECASE)]
@@ -258,8 +273,9 @@ class TpPlcBlock(object):
 class TpConfig(object):
     coord_re = re.compile('^\s*&(\d+)(.*)$', flags=re.IGNORECASE)
     coord_def_re = re.compile('^\s*#(\d+)->(.*)$', flags=re.IGNORECASE)
-    plc_re = re.compile('^\s*open plc (\d+)\s*(clear)?', flags=re.IGNORECASE)
+    plc_re = re.compile('^\s*open plc (\d+)\s*(clear)?$', flags=re.IGNORECASE)
     var_re = re.compile('^\s*([pmqi]\d+)\s*(->|=)\s*(.*)$', flags=re.IGNORECASE)
+    include_re = re.compile('^\s*#include\s*"?(.*)"?$', flags=re.IGNORECASE)
 
     def __init__(self, fn='config/mc09.pmc', **load_opts):
         if fn:
@@ -296,6 +312,7 @@ class TpConfig(object):
         self._plc = None
         self._unparsed = []
         self._var_block = None
+        self.includes = []
 
         self.last_coord = 0
         self.blocks = []
@@ -389,6 +406,16 @@ class TpConfig(object):
         self.plcs[number] = self._plc = TpPlcBlock(number, clear=(clear.lower() == 'clear'))
         self.blocks.append(self._plc)
 
+    def _matched_include(self, m, line_num, line, comment, eval_kwargs):
+        fn, = m.groups()
+        include = TpInclude(fn, comment)
+        self.includes.append(include)
+        self.blocks.append(include)
+
+    def remove_block(self, block):
+        #  TODO - track parents for easy removal
+        self.blocks.remove(block)
+
     def _eval_line(self, line_num, line, comment, verbose=True):
         line_lower = line.lower().strip()
 
@@ -405,10 +432,11 @@ class TpConfig(object):
                        (self.coord_re, self._matched_coord),
                        (self.coord_def_re, self._matched_coord_def),
                        (self.plc_re, self._matched_plc),
+                       (self.include_re, self._matched_include),
                        ]
 
             for regex, fcn in matches:
-                m = regex.match(line)
+                m = regex.match(line.rstrip())
                 if m:
                     self._unparsed_block()
                     return fcn(m, line_num, line, comment, eval_kwargs)

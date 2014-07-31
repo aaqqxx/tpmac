@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vi: ts=4 sw=4
 """
-Usage: viewer.py [-c] [--pdf=FILE] [--profile=geobrick_lv] PMC_FILE [PMC_FILE [PMC_FILE... ]]
+Usage: viewer.py [-ci] [--pdf=FILE] [--profile=geobrick_lv] PMC_FILE [PMC_FILE [PMC_FILE... ]]
        viewer.py --download [--pdf=FILE]
 
 Displays turbo pmac configuration files
@@ -14,6 +14,7 @@ Options:
     -p --profile=x   variable information profile [default: geobrick_lv]
     -d --download    download "turbo srm.pdf" from Delta Tau website (http://www.deltatau.com/manuals/pdfs/TURBO%20SRM.pdf)
     -p --pdf=FILE    specify pdf documentation location (current index is of 2014/2/14 manual) [default: turbo_srm.pdf]
+    -i --includes    open files included in all PMC files
 """
 
 # TODO option for executing program instead of relying on browser pdf viewer
@@ -446,13 +447,14 @@ class PLCEditor(QtGui.QSplitter):
         self.editor = TextEditor(main, fn)
         self.refs = RefWidget(plc, self.editor, fn)
 
-        self.addWidget(self.refs)
-        self.addWidget(self.editor)
-
         refs = plc.find_references()
-        for ref in refs:
-            self.refs.list_.addItem(ref)
+        if refs:
+            self.addWidget(self.refs)
 
+            for ref in refs:
+                self.refs.list_.addItem(ref)
+
+        self.addWidget(self.editor)
         self.editor.setText('%s' % plc)
 
 
@@ -470,7 +472,7 @@ class PLCView(QtGui.QTabWidget):
 
 
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self, fns, clean=False):
+    def __init__(self, fns, clean=False, load_includes=False):
         QtGui.QMainWindow.__init__(self)
 
         self.tabs = QtGui.QTabWidget()
@@ -483,10 +485,16 @@ class MainWindow(QtGui.QMainWindow):
         self.plc_widgets = {}
 
         self.setWindowTitle('TpView - [%s]' % fns[0])
-        for fn in fns:
-            self.load_file(fn, clean)
+        self.load_includes = load_includes
 
-    def load_file(self, fn, clean=False):
+        for fn in fns:
+            self.load_file(fn, clean, load_includes=load_includes)
+
+    def load_file(self, fn, clean=False, load_includes=False):
+        fn = os.path.relpath(fn)
+        if fn in self.configs:
+            return
+
         if clean:
             print('Cleaning file: %s' % fn)
             output = StringIO()
@@ -512,6 +520,10 @@ class MainWindow(QtGui.QMainWindow):
             var_name = tpvar.var_str
             addr = tpvar.value
             self.mvar_info.add_item(var_name, [addr])
+
+        if load_includes:
+            for include in config.includes:
+                self.load_file(include.fn, clean=clean, load_includes=load_includes)
 
 
 def download(url, filename):
@@ -545,12 +557,13 @@ if __name__ == "__main__":
         sys.exit(0)
 
     tp_info.load_settings(opts['--profile'])
-    pmc_file = opts['PMC_FILE']
+    pmc_files = opts['PMC_FILE']
 
-    print('Loading: %s' % ', '.join(pmc_file))
+    print('Loading: %s' % ', '.join(pmc_files))
 
     app = QtGui.QApplication(sys.argv)
-    main = MainWindow(pmc_file, clean=opts['--clean'])
+    main = MainWindow(pmc_files, clean=opts['--clean'],
+                      load_includes=opts['--includes'])
 
     main.show()
     app.exec_()
