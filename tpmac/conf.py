@@ -177,6 +177,9 @@ class TpVars(object):
     def __setitem__(self, key, value):
         self.items[key].value = value
 
+    def __len__(self):
+        return len(self.items.keys())
+
     def __iter__(self):
         for var, tpvar in sorted(self.items.items(), key=lambda (k, v): k):
             yield tpvar

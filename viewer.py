@@ -470,15 +470,54 @@ class PLCView(QtGui.QTabWidget):
 
 
 class VariableView(QtGui.QFrame):
-    def __init__(self, vars, parent=None):
+    COL_VAR = 0
+    COL_VALUE = 1
+    COL_COMMENT = 2
+    NUM_COLS = 3
+
+    def __init__(self, vars_, parent=None):
         QtGui.QFrame.__init__(self, parent)
 
-        self.list_ = QtGui.QListWidget()
-        self.list_.itemDoubleClicked.connect(self.open_)
+        self.vars_ = vars_
+        self.table = QtGui.QTableWidget(len(vars_), self.NUM_COLS)
+        self.table.itemDoubleClicked.connect(self.open_)
+
+        self.filter_edit = QtGui.QLineEdit()
+        self.filter_edit.textChanged.connect(self.update_filter)
 
         self.layout = QtGui.QGridLayout()
-        self.layout.addWidget(self.list_, 0, 0, 1, 2)
+        self.layout.addWidget(self.filter_edit, 0, 0, 1, 1)
+        self.layout.addWidget(self.table, 1, 0, 1, 1)
         self.setLayout(self.layout)
+
+        self.table.setHorizontalHeaderLabels(['Variable', 'Value', 'Comment'])
+        for i, var in enumerate(vars_):
+            self.set_item(i, self.COL_VAR, var.var_str)
+            self.set_item(i, self.COL_VALUE, var.value)
+            self.set_item(i, self.COL_COMMENT, var.comment)
+
+        self.table.verticalHeader().setVisible(False)
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+
+    def update_filter(self, text):
+        text = str(text).lower()
+
+        for i, var in enumerate(self.vars_):
+            show_ = not text or text in str(var).lower()
+            if not show_ and var.comment is not None and text in var.comment.lower():
+                show_ = True
+
+            self.table.setRowHidden(i, not show_)
+
+    def set_item(self, row, col, item):
+        if item is None:
+            return
+
+        if not isinstance(item, QtGui.QTableWidgetItem):
+            item = QtGui.QTableWidgetItem(item)
+
+        self.table.setItem(row, col, item)
 
     def open_(self):
         pass
@@ -500,6 +539,12 @@ class ConfigView(QtGui.QTabWidget):
         if config.plcs:
             self.plc_view = PLCView(self)
             self.addTab(self.plc_view, 'PLCs')
+
+        self.var_views = {}
+        for var_type, tpvars in config.variables.items():
+            if len(tpvars) > 0:
+                view = self.var_views[var_type] = VariableView(tpvars)
+                self.addTab(view, '%s-variables' % tpvars.type_.upper())
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -552,8 +597,8 @@ class MainWindow(QtGui.QMainWindow):
             addr = tpvar.value
             self.mvar_info.add_item(var_name, [addr])
 
-        for var_type in util.VAR_TYPES:
-            for tpvar in config.variables[var_type]:
+        for var_type, tpvars in config.variables.items():
+            for tpvar in tpvars:
                 self.variables[var_type].add_var(tpvar)
 
         if load_includes:
