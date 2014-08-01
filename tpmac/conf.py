@@ -31,18 +31,18 @@ def format_comments(lines):
                 line = ''.join((line, ' ' * (comment_col - len(line)), '; ', comment))
             elif comment:
                 if last_line:
-                    # certainly a lazy way...
                     last_spaces = len(last_line) - len(last_line.lstrip())
                 else:
                     last_spaces = 0
 
-                line = ''.join((line, ' ' * last_spaces, '; ', comment))
+                line = ''.join((' ' * last_spaces, '; ', comment))
             else:
                 line = ';'
 
         yield line
 
-        last_line = line
+        if line:
+            last_line = line
 
 
 class TpBlock(object):
@@ -233,23 +233,23 @@ class TpPlcBlock(object):
 
         indent_words = ('while', 'if', 'for', 'do', 'else')
         deindent_words = ()
-        deindent_immediate = ('else', 'end')
+        deindent_immediate = ('else', 'end', 'endw', 'endwhile', 'endif')
         for i, (line, comment) in enumerate(self.lines):
-            word = util.get_first_word(line)
-            if word in deindent_immediate:
-                indent -= indent_amount
+            line = line.strip()
 
-            if line.strip():
-                line = ''.join((' ' * indent, line.lstrip()))
-            else:
-                line = ''
+            if line:
+                word = util.get_first_word(line)
+                if word in deindent_immediate:
+                    indent -= indent_amount
+
+                line = ''.join((' ' * indent, line))
+
+                if word in indent_words:
+                    indent += indent_amount
+                elif word in deindent_words:
+                    indent -= indent_amount
 
             self.lines[i] = (line, comment)
-
-            if word in indent_words:
-                indent += indent_amount
-            elif word in deindent_words:
-                indent -= indent_amount
 
     def config_str(self, config=None):
         if self.clear:

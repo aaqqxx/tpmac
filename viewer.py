@@ -439,9 +439,6 @@ class PLCEditor(QtGui.QSplitter):
         self.cview = cview
         self.plc = plc
 
-        if reformat:
-            plc.reformat()
-
         self.editor = TextEditor(cview)
         self.refs = RefWidget(plc, self.editor)
 
