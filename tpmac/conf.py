@@ -282,7 +282,7 @@ class TpPlcBlock(object):
 class TpConfig(object):
     coord_re = re.compile('^\s*&(\d+)(.*)$', flags=re.IGNORECASE)
     coord_def_re = re.compile('^\s*#(\d+)->(.*)$', flags=re.IGNORECASE)
-    plc_re = re.compile('^\s*open plc (\d+)\s*(clear)?$', flags=re.IGNORECASE)
+    plc_re = re.compile('^\s*open plc\s*(\d+)\s*(clear)?$', flags=re.IGNORECASE)
     var_re = re.compile('^\s*([pmqi]\d+)\s*(->|=)\s*(.*)$', flags=re.IGNORECASE)
     include_re = re.compile('^\s*#include\s*"?(.*)"?$', flags=re.IGNORECASE)
 
@@ -412,7 +412,8 @@ class TpConfig(object):
     def _matched_plc(self, m, line_num, line, comment, eval_kwargs):
         number, clear = m.groups()
         number = int(number)
-        self.plcs[number] = self._plc = TpPlcBlock(number, clear=(clear.lower() == 'clear'))
+        clear = clear is not None and clear.lower() == 'clear'
+        self.plcs[number] = self._plc = TpPlcBlock(number, clear=clear)
         self.blocks.append(self._plc)
 
     def _matched_include(self, m, line_num, line, comment, eval_kwargs):
