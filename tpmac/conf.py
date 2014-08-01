@@ -233,7 +233,9 @@ class TpPlcBlock(object):
 
         indent_words = ('while', 'if', 'for', 'do', 'else')
         deindent_words = ()
-        deindent_immediate = ('else', 'end', 'endw', 'endwhile', 'endif')
+        deindent_immediate = ('else', 'end',
+                              'endwhile', 'endw',
+                              'endif', 'endi')
         for i, (line, comment) in enumerate(self.lines):
             line = line.strip()
 
