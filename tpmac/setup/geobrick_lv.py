@@ -47,7 +47,9 @@ ect_info = {'Quadrature': ect_type(1, ['$78000', '$78008', '$78010', '$78018', '
             'Panasonic': ect_type(2, ['$278B20,$18000', '$278B24,$18000', '$278B28,$18000', '$278B2C,$18000', '$278B30,$18000', '$278B34,$18000', '$278B38,$18000', '$278B3C,$18000']),
             'Tamagawa': ect_type(2, ['$278B20,$18000', '$278B24,$18000', '$278B28,$18000', '$278B2C,$18000', '$278B30,$18000', '$278B34,$18000', '$278B38,$18000', '$278B3C,$18000']),
             'Biss B/C': ect_type(2, ['$278B20,$18000', '$278B24,$18000', '$278B28,$18000', '$278B2C,$18000', '$278B30,$18000', '$278B34,$18000', '$278B38,$18000', '$278B3C,$18000']),
-            'Microstepping': ect_type(3, ['$6800BF,$018018,$EC0001', '$68013F,$018018,$EC0003', '$6801BF,$018018,$EC0005', '$68023F,$018018,$EC0007', '$6802BF,$018018,$EC0009', '$68033F,$018018,$EC000B', '$6803BF,$018018,$EC000D', '$68043F,$018018,$EC000F']),
+
+            # TODO: last addr is wrong
+            'Micro Stepping': ect_type(3, ['$6800BF,$018018,$EC0001', '$68013F,$018018,$EC0003', '$6801BF,$018018,$EC0005', '$68023F,$018018,$EC0007', '$6802BF,$018018,$EC0009', '$68033F,$018018,$EC000B', '$6803BF,$018018,$EC000D', '$68043F,$018018,$EC000F']),
             }
 
 
@@ -169,11 +171,9 @@ class LVMotor(object):
                  max_voltage=320,  # VDC
                  pole_res=1.13,    # pole-to-pole, ohms
                  pole_induct=3.6,  # pole-to-pole, mH
-                 poles_rev=3,      # pole pairs per revolution
-                 # enc_type='Quadrature',
-                 enc_type='Microstepping',
+                 enc_type='Micro Stepping',
                  counts_per_rev=32768,
-                 pairs_per_rev=50,
+                 poles_rev=3,      # pole pairs per revolution
                  phasing_method='Stepper Method',
                  overtravel_limits=True,
 
@@ -214,7 +214,6 @@ class LVMotor(object):
         self.enc_addr = ect_info[self.enc_type].addrs[self.array_idx]
         self.enc_lines = ect_info[self.enc_type].lines
 
-        self.pairs_per_rev = int(pairs_per_rev)
         self.phasing_method = phasing_method
 
         assert phasing_method in phasing_methods, 'Invalid phasing method'
@@ -371,10 +370,9 @@ class LVMotor(object):
         cmd_str = 'CMD"WX:${:X},%s"          // %s'.format(addr0, )
 
         sleep_str = 'timer32 = %d msec32' % sleep_time
-        for line in [sleep_str,
-                     cmd_str % (self.clear_fault_addr, 'Motor #%d CLRF' % mnum),
+        for line in [cmd_str % (self.clear_fault_addr, 'Motor #%d CLRF' % mnum),
                      sleep_str,
-                     cmd_str % (self.type__addr, 'Motor #%d Type' % mnum),
+                     cmd_str % (self.motor_type_addr, 'Motor #%d Type' % mnum),
                      sleep_str,
                      cmd_str % (self.protection_addr, 'Motor #%d Protection' % mnum),
                      sleep_str,
@@ -402,7 +400,7 @@ class LVMotor(object):
 
     @property
     def uses_ustep(self):
-        return self.enc_type == 'Microstepping'
+        return self.enc_type == 'Micro Stepping'
 
     @property
     def ect_end_addr(self):
@@ -539,54 +537,87 @@ class LVMotor(object):
         else:
             return '0'
 
+    def get_config(self, use_comments=True):
+        for line in self._get_config():
+            comment, line = line
+            if comment and use_comments:
+                yield '// %s' % comment
+            if isinstance(line, str):
+                yield line
+            elif isinstance(line, tuple):
+                if len(line) == 1:
+                    yield '{}={}'.format(*line[0])
+                else:
+                    yield ' '.join('{}={}'.format(*entry)
+                                   for entry in line)
 
-    def get_config(self, ):
-
+    def _get_config(self):
         if self.is_dynamic_ect:
-            yield 'WY:${},{} // Dynamic ECT'.format(self.ect_start_addr, self.enc_addr)
+            yield 'Dynamic ECT', 'WY:{},{}'.format(self.ect_start_addr, self.enc_addr)
 
-        yield '{}={}'.format(self.i_activation, self.enabled_value)
-        yield '{}={}'.format(self.i_commutation, self.enabled_value)
-        yield '{}={}'.format(self.i_output_addr, self.output_addr)
-        yield '{}={}'.format(self.i_pos_feedback, self.ect_end_addr)
-        yield '{}={}'.format(self.i_vel_feedback, self.ect_end_addr)
-        yield '{}={}'.format(self.i_current_loop_addr, self.current_loop_addr)
-        yield '{}={}'.format(self.i_phase_offset, self.phase_offset)
-        yield '{}={}'.format(self.i_pwm_scale_factor, int(self.pwm_scale))
+        yield 'Activation', \
+            ((self.i_activation, self.enabled_value), )
+        yield 'Commutation',\
+            ((self.i_commutation, self.enabled_value), )
+        yield 'Output address', \
+            ((self.i_output_addr, self.output_addr), )
+        yield 'Position feedback', \
+            ((self.i_pos_feedback, self.ect_end_addr), )
+        yield 'Velocity feedback', \
+            ((self.i_vel_feedback, self.ect_end_addr), )
+        yield 'Current loop address', \
+            ((self.i_current_loop_addr, self.current_loop_addr), )
+        yield 'Phase offset', \
+            ((self.i_phase_offset, self.phase_offset), )
+        yield 'PWM scale factor', \
+            ((self.i_pwm_scale_factor, int(self.pwm_scale)), )
 
         ix61, ix62, ix76 = self.i_current_loop
-        yield '{}={} {}={} {}={}'.format(ix61, self.ix61, ix62, self.ix62, ix76, self.ix76)
+        yield 'Current loop', \
+            ((ix61, self.ix61), (ix62, self.ix62), (ix76, self.ix76), )
 
         ix57, ix58, ix69 = self.i_i2t
-        fmt = '{}={} ' * 3
-        yield fmt.format(ix57, self.ix57, ix58, self.ix58, ix69, self.ix69)
+        yield 'I2T', \
+            ((ix57, self.ix57), (ix58, self.ix58), (ix69, self.ix69), )
 
-        yield '{}={}'.format(self.i_flag_addr, self.flag_settings)
-        yield '{}={}'.format(self.i_flag_mode, self.flag_mode)
-
-        yield '{}={}'.format(self.i_phase_pos, self.phase_pos)
-        yield '{}={}'.format(self.i_pole_pairs, self.pole_pairs)
-        yield '{}={}'.format(self.i_counts_per_rev, self.counts_per_rev)
-
-        yield '{}={}'.format(self.i_phase_search, self.ix80)
-        yield '{}={}'.format(self.i_phase_search_mag, self.ix73)
-        yield '{}={}'.format(self.i_phase_search_t, self.ix74)
-        yield '{}={}'.format(self.i_abs_pos_addr, self.ix81)
-        yield '{}={}'.format(self.i_abs_pos_format, self.ix91)
-        yield '{}={}'.format(self.i_mag_current, self.ix77)
-        yield '{}={}'.format(self.i_quad_cur_loop, self.ix96)
+        yield 'Flag addr', \
+            ((self.i_flag_addr, self.flag_settings), )
+        yield 'Flag mode', \
+            ((self.i_flag_mode, self.flag_mode), )
+        yield 'Phase pos', \
+            ((self.i_phase_pos, self.phase_pos), )
+        yield 'Pole pairs', \
+            ((self.i_pole_pairs, self.pole_pairs), )
+        yield 'Counts/rev', \
+            ((self.i_counts_per_rev, self.counts_per_rev), )
+        yield 'Phase search', \
+            ((self.i_phase_search, self.ix80), )
+        yield 'Phase search mag', \
+            ((self.i_phase_search_mag, self.ix73), )
+        yield 'Phase search time', \
+            ((self.i_phase_search_t, self.ix74), )
+        yield 'Abs pos addr', \
+            ((self.i_abs_pos_addr, self.ix81), )
+        yield 'Abs pos format', \
+            ((self.i_abs_pos_format, self.ix91), )
+        yield 'Mag current', \
+            ((self.i_mag_current, self.ix77), )
+        yield 'Quad cur loop', \
+            ((self.i_quad_cur_loop, self.ix96), )
 
         ix30, ix31, ix32, ix33, ix34, ix35_39 = self.i_stepper_pid
-        fmt = '{}={} ' * 6
-        yield fmt.format(ix30, self.ix30,
-                         ix31, self.ix31,
-                         ix32, self.ix32,
-                         ix33, self.ix33,
-                         ix34, self.ix34,
-                         ix35_39, self.ix35_39)
+        yield 'Stepper PID', \
+            ((ix30, self.ix30),
+             (ix31, self.ix31),
+             (ix32, self.ix32),
+             (ix33, self.ix33),
+             (ix34, self.ix34),
+             (ix35_39, self.ix35_39)
+             )
 
         if self.uses_ustep:
-            yield '{}={}'.format(self.i_comm_delay, self.ix56)
+            yield 'Comm delay', \
+                ((self.i_comm_delay, self.ix56), )
 
 
 class LVConfig(object):
@@ -791,14 +822,20 @@ class LVConfig(object):
         yield 'I6801={:<5d}  // Phase frequency: {:.4f} kHz'.format(phase_div, phase_freq)
         yield 'I6802={:<5d}  // Servo frequency: {:.4f} kHz'.format(servo_div, servo_freq)
 
-    def get_plc_setup(self):
+    def get_plc_setup(self, plc_num=1):
         yield ''
         yield '#define timer32     I6612'
         yield '#define msec32     *8388608/I10WHILE(I6612>0)ENDWHILE'
         yield ''
 
-        yield 'OPEN PLC %d CLEAR'
+        yield 'OPEN PLC %d CLEAR' % plc_num
         yield 'DISABLE PLC 2..31'
+
+        for motor in self.motors:
+            for line in motor.plc_setup():
+                yield line
+
+            yield ''
 
         yield 'DISABLE PLC 1'
         yield 'CLOSE'
@@ -824,9 +861,28 @@ class LVConfig(object):
             for line in it:
                 yield line
 
-        for motor in self.motors:
-            for line in motor.get_config():
-                yield line
+        motor_conf = [motor.get_config(use_comments=(i == 0))
+                      for i, motor in enumerate(self.motors)]
+
+        running = True
+        while running:
+            for conf in motor_conf:
+                stop = []
+                try:
+                    line = next(conf)
+
+                    if line.startswith('//'):
+                        yield ''
+                    yield line
+                    if line.startswith('//'):
+                        line = next(conf)
+                        yield line
+                except StopIteration:
+                    stop.append(True)
+                else:
+                    stop.append(False)
+
+            running = not any(stop)
 
     def get_pwm_sf(self, max_voltage):
         """
@@ -849,9 +905,22 @@ class LVConfig(object):
             for line in static_ect_setup:
                 yield static_ect_setup
 
+
 if __name__ == '__main__':
     conf = LVConfig()
-    conf.add_motor(LVMotor(conf, 1))
+    motors = [LVMotor(conf, i,
+                      'Stepper', 2.5, True, 13.1, True,
+                      320, 1.13, 3.6, 'Micro Stepping', 32768,
+                      3, 'Stepper Method', True,
+                      1.8, 2000, 26,
+
+                      cur_loop_bandwidth=300,
+                      cur_loop_damping=0.707,
+                      micro_stepping=65536)
+              for i in range(1, 9)]
+
+    for m in motors:
+        conf.add_motor(m)
 
     for line in conf.get_config():
         print(line)
